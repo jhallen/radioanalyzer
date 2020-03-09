@@ -1,8 +1,8 @@
 
 CC = riscv32-unknown-elf-gcc
 AS = riscv32-unknown-elf-as
-ASFLAGS = -march=rv32imc
-CFLAGS = -march=rv32imc -ffreestanding
+ASFLAGS = -march=rv32im
+CFLAGS = -march=rv32im -ffreestanding
 
 OBJS = start.o firmware.o
 

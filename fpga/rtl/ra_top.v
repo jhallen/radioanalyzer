@@ -150,7 +150,7 @@ bus_uart #(.ADDR(32'h0200_0004)) uart
   (
   .bus_in (bus_in),
   .bus_out (uart_bus_out),
-  .testit (testit),
+  .testit (1'b0), // (testit),
   .ser_tx (ser_tx),
   .ser_rx (ser_rx)
   );
@@ -182,7 +182,7 @@ picorv32 #(
   .PROGADDR_RESET (32'h0001_0000), // Start of ROM, initial PC value
   .PROGADDR_IRQ (32'h0000_0000),
   .BARREL_SHIFTER (1),
-  .COMPRESSED_ISA (1),
+  .COMPRESSED_ISA (0),
   .ENABLE_COUNTERS (1),
   .ENABLE_MUL (1),
   .ENABLE_DIV (1),
