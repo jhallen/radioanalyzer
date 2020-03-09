@@ -1,0 +1,16 @@
+iverilog -g2001 \
+bus_irq_reg.v \
+bus_mask_reg.v \
+bus_ram.v \
+bus_reg.v \
+bus_rom.v \
+bus_ro_reg.v \
+bus_split_reg.v \
+bus_uart.v \
+picorv32.v \
+ram_sp_be.v \
+ra_top.v \
+rom.v \
+simpleuart.v \
+tb.v &&
+./a.out
