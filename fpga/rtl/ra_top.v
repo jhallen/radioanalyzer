@@ -66,6 +66,18 @@ wire [31:0] irq;
 wire [31:0] mem_rdata;
 wire mem_ready;
 
+// Convert valid/ready into request/ack
+
+reg mem_busy;
+
+always @(posedge clk)
+  if (!reset_l || mem_ready)
+    mem_busy <= 0;
+  else
+    mem_busy <= mem_valid;
+
+wire mem_pulse = (mem_valid && !mem_busy); // High on first cycle of transaction only
+
 // Joe's SoC bus
 
 `include "bus_params.v"
@@ -75,10 +87,10 @@ wire [BUS_OUT_WIDTH-1:0] bus_out;
 
 assign bus_in[BUS_FIELD_RESET_L] = reset_l;
 assign bus_in[BUS_FIELD_CLK] = clk;
-assign bus_in[BUS_FIELD_WE+3:BUS_FIELD_WE] = (mem_wstrb & { 4 { mem_valid } });
+assign bus_in[BUS_FIELD_WE+3:BUS_FIELD_WE] = (mem_wstrb & { 4 { mem_pulse } });
 assign bus_in[BUS_ADDR_END-1:BUS_ADDR_START] = mem_addr;
 assign bus_in[BUS_WR_DATA_END-1:BUS_WR_DATA_START] = mem_wdata;
-assign bus_in[BUS_FIELD_RE] = (mem_valid & ~|mem_wstrb);
+assign bus_in[BUS_FIELD_RE] = (mem_pulse & ~|mem_wstrb);
 
 assign mem_rdata = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START];
 assign mem_ready = bus_out[BUS_FIELD_WR_ACK] | bus_out[BUS_FIELD_RD_ACK];
@@ -182,7 +194,7 @@ picorv32 #(
   .PROGADDR_RESET (32'h0001_0000), // Start of ROM, initial PC value
   .PROGADDR_IRQ (32'h0000_0000),
   .BARREL_SHIFTER (1),
-  .COMPRESSED_ISA (0),
+  .COMPRESSED_ISA (1),
   .ENABLE_COUNTERS (1),
   .ENABLE_MUL (1),
   .ENABLE_DIV (1),

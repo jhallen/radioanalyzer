@@ -55,7 +55,7 @@ always @(posedge bus_clk)
 
 assign bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START] = div_rd_ack ? div_rd_data : (dat_rd_ack ? dat_rd_data : 0);
 assign bus_out[BUS_FIELD_RD_ACK] = div_rd_ack | dat_rd_ack;
-assign bus_out[BUS_FIELD_WR_ACK] = (decode_div & |bus_we) | (decode_dat & |bus_we & dat_ack);
+assign bus_out[BUS_FIELD_WR_ACK] = (decode_div & |bus_we) | dat_ack;
 assign bus_out[BUS_FIELD_IRQ] = 0;
 
 simpleuart raw_uart

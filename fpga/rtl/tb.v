@@ -42,7 +42,7 @@ initial
     reset_l <= 1;
     @(posedge clk);
     @(posedge clk);
-    for (x = 0; x != 1000000; x = x + 1)
+    for (x = 0; x != 200000; x = x + 1)
       @(posedge clk);
 
     $finish;

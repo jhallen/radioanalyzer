@@ -45,7 +45,6 @@ module simpleuart (
 	reg [9:0] send_pattern;
 	reg [3:0] send_bitcnt;
 	reg [31:0] send_divcnt;
-	reg send_dummy;
 
 	reg reg_dat_ack;
 
@@ -108,33 +107,25 @@ module simpleuart (
 	assign ser_tx = send_pattern[0];
 
 	always @(posedge clk) begin
-		if (reg_div_we)
-			send_dummy <= 1;
 		send_divcnt <= send_divcnt + 1;
 		if (!resetn) begin
 			send_pattern <= ~0;
 			send_bitcnt <= 0;
 			send_divcnt <= 0;
-			send_dummy <= 1;
 			reg_dat_ack <= 0;
 		end else begin
 			reg_dat_ack <= 0;
-			if (send_dummy && !send_bitcnt) begin
-				send_pattern <= ~0;
-				send_bitcnt <= 15;
-				send_divcnt <= 0;
-				send_dummy <= 0;
-			end else
 			if (reg_dat_we && !send_bitcnt) begin
 				send_pattern <= {1'b1, reg_dat_di[7:0], 1'b0};
 				send_bitcnt <= 10;
 				send_divcnt <= 0;
-				reg_dat_ack <= 1;
 			end else
 			if (send_divcnt > cfg_divider && send_bitcnt) begin
 				send_pattern <= {1'b1, send_pattern[9:1]};
 				send_bitcnt <= send_bitcnt - 1;
 				send_divcnt <= 0;
+				if (send_bitcnt == 1)
+					reg_dat_ack <= 1;
 			end
 		end
 	end
