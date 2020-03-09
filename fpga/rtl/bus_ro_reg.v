@@ -27,7 +27,8 @@ input [DATAWIDTH-1:0] in;
 
 `include "bus_decl.v"
 
-wire reg_rd_ack = ({bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == ADDR && bus_re);
+wire rd_ack = ({bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == ADDR && bus_re);
+reg reg_rd_ack;
 
 wire [BUS_DATA_WIDTH-1:0] shift_data = ({ { BUS_DATA_WIDTH - DATAWIDTH { 1'd0 } }, in } << OFFSET);
 
@@ -38,8 +39,14 @@ assign bus_out[BUS_FIELD_IRQ] = 0;
 
 always @(posedge bus_clk)
   if (!bus_reset_l)
-    rd_pulse <= 0;
+    begin
+      rd_pulse <= 0;
+      reg_rd_ack <= 0;
+    end
   else
-    rd_pulse <= reg_rd_ack;
+    begin
+      rd_pulse <= rd_ack;
+      reg_rd_ack <= rd_ack;
+    end
 
 endmodule

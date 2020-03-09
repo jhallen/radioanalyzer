@@ -58,25 +58,13 @@ always @(posedge clk)
 // CPU signals
 
 wire [31:0] mem_wdata;
-wire [3:0] mem_wstrb;
+wire [3:0] mem_be;
 wire [31:0] mem_addr;
-wire mem_valid;
-wire mem_instr;
 wire [31:0] irq;
 wire [31:0] mem_rdata;
+wire mem_read;
+wire mem_write;
 wire mem_ready;
-
-// Convert valid/ready into request/ack
-
-reg mem_busy;
-
-always @(posedge clk)
-  if (!reset_l || mem_ready)
-    mem_busy <= 0;
-  else
-    mem_busy <= mem_valid;
-
-wire mem_pulse = (mem_valid && !mem_busy); // High on first cycle of transaction only
 
 // Joe's SoC bus
 
@@ -87,10 +75,11 @@ wire [BUS_OUT_WIDTH-1:0] bus_out;
 
 assign bus_in[BUS_FIELD_RESET_L] = reset_l;
 assign bus_in[BUS_FIELD_CLK] = clk;
-assign bus_in[BUS_FIELD_WE+3:BUS_FIELD_WE] = (mem_wstrb & { 4 { mem_pulse } });
+assign bus_in[BUS_FIELD_BE+3:BUS_FIELD_BE] = mem_be;
 assign bus_in[BUS_ADDR_END-1:BUS_ADDR_START] = mem_addr;
 assign bus_in[BUS_WR_DATA_END-1:BUS_WR_DATA_START] = mem_wdata;
-assign bus_in[BUS_FIELD_RE] = (mem_pulse & ~|mem_wstrb);
+assign bus_in[BUS_FIELD_RE] = mem_read;
+assign bus_in[BUS_FIELD_WE] = mem_write;
 
 assign mem_rdata = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START];
 assign mem_ready = bus_out[BUS_FIELD_WR_ACK] | bus_out[BUS_FIELD_RD_ACK];
@@ -181,7 +170,7 @@ bus_ram #(.ADDR(32'h0000_0000), .LOGSIZE(16)) cpu_ram
 
 wire [BUS_OUT_WIDTH-1:0] cpu_rom_bus_out;
 
-bus_rom #(.ADDR(32'h0001_0000), .LOGSIZE(16)) cpu_rom
+bus_rom #(.ADDR(32'h0001_0000), .LOGSIZE(16), .FILE("/home/jallen/radioanalyzer/sw/ra.mem")) cpu_rom
   (
   .bus_in (bus_in),
   .bus_out (cpu_rom_bus_out)
@@ -207,19 +196,20 @@ picorv32 #(
 
   .trap (),
   
-  .mem_valid (mem_valid),
-  .mem_instr (mem_instr),
   .mem_ready (mem_ready),
-
-  .mem_addr (mem_addr),
-  .mem_wdata (mem_wdata),
-  .mem_wstrb (mem_wstrb),
   .mem_rdata (mem_rdata),
 
-  .mem_la_read (),
-  .mem_la_write (),
-  .mem_la_addr (),
-  .mem_la_wstrb (),
+  .mem_valid (),
+  .mem_instr (),
+  .mem_addr (),
+  .mem_wdata (),
+  .mem_wstrb (),
+
+  .mem_la_read (mem_read),
+  .mem_la_write (mem_write),
+  .mem_la_addr (mem_addr),
+  .mem_la_wdata (mem_wdata),
+  .mem_la_wstrb (mem_be),
 
   .irq (irq),
   .eoi (),

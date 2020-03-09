@@ -31,8 +31,10 @@ reg wr_pulse;
 
 wire decode = ({ bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == ADDR);
 
-wire reg_rd_ack = (decode && bus_re);
-wire reg_wr_ack = (decode && bus_we);
+wire rd_ack = (decode && bus_re);
+wire wr_ack = (decode && bus_we);
+reg reg_rd_ack;
+reg reg_wr_ack;
 
 wire [BUS_DATA_WIDTH-1:0] padded_out = { { BUS_DATA_WIDTH - DATAWIDTH { 1'd0 } }, out };
 
@@ -46,11 +48,15 @@ always @(posedge bus_clk)
     begin
       out <= IZ;
       wr_pulse <= 0;
+      reg_rd_ack <= 0;
+      reg_wr_ack <= 0;
     end
   else
     begin
       wr_pulse <= 0;
-      if (reg_wr_ack)
+      reg_rd_ack <= rd_ack;
+      reg_wr_ack <= wr_ack;
+      if (wr_ack)
         begin
           out <= bus_wr_data[OFFSET+DATAWIDTH-1:OFFSET];
           wr_pulse <= 1;

@@ -40,22 +40,25 @@ wire dat_ack;
 
 reg div_rd_ack;
 reg dat_rd_ack;
+reg div_wr_ack;
 
 always @(posedge bus_clk)
   if (!bus_reset_l)
     begin
       div_rd_ack <= 0;
       dat_rd_ack <= 0;
+      div_wr_ack <= 0;
     end
   else
     begin
       div_rd_ack <= (decode_div && bus_re);
+      div_wr_ack <= (decode_div && bus_we);
       dat_rd_ack <= (decode_dat && bus_re);
     end
 
 assign bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START] = div_rd_ack ? div_rd_data : (dat_rd_ack ? dat_rd_data : 0);
 assign bus_out[BUS_FIELD_RD_ACK] = div_rd_ack | dat_rd_ack;
-assign bus_out[BUS_FIELD_WR_ACK] = (decode_div & |bus_we) | dat_ack;
+assign bus_out[BUS_FIELD_WR_ACK] = div_wr_ack | dat_ack;
 assign bus_out[BUS_FIELD_IRQ] = 0;
 
 simpleuart raw_uart
@@ -66,7 +69,7 @@ simpleuart raw_uart
   .ser_tx (ser_tx),
   .ser_rx (ser_rx),
 
-  .reg_div_we (bus_we & { 4 { decode_div } }),
+  .reg_div_we (bus_be & { 4 { decode_div && bus_we } }),
   .reg_div_di (bus_wr_data),
   .reg_div_do (div_rd_data),
 

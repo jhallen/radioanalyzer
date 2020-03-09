@@ -37,8 +37,10 @@ reg [DATAWIDTH-1:0] cur;
 reg [DATAWIDTH-1:0] out;
 
 wire decode = ({ bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == ADDR);
-wire reg_rd_ack = (decode && bus_re);
-wire reg_wr_ack = (decode && bus_we);
+wire rd_ack = (decode && bus_re);
+wire wr_ack = (decode && bus_we);
+reg reg_rd_ack;
+reg reg_wr_ack;
 
 assign bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START] = reg_rd_ack ? (out << OFFSET) : { BUS_DATA_WIDTH { 1'd0 } };
 assign bus_out[BUS_FIELD_RD_ACK] = reg_rd_ack;
@@ -54,9 +56,13 @@ always @(posedge bus_clk)
       out <= 0;
       count <= 0;
       irq <= 0;
+      reg_rd_ack <= 0;
+      reg_wr_ack <= 0;
     end
   else
     begin
+      reg_rd_ack <= rd_ack;
+      reg_wr_ack <= wr_ack;
       if (count)
         count <= count - 1;
 
@@ -67,7 +73,7 @@ always @(posedge bus_clk)
       if (cur & ~out)
         count <= 15; // New interrupt detected
 
-      if(reg_wr_ack)
+      if(wr_ack)
         cur <= (cur ^ (bus_wr_data >> OFFSET)) | trig;
       else
         cur <= cur | trig;

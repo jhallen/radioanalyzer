@@ -18,28 +18,35 @@ output [BUS_OUT_WIDTH-1:0] bus_out;
 `include "bus_decl.v"
 
 wire decode = (bus_addr >= ADDR && bus_addr < (ADDR + SIZE));
-wire wr_ack = (decode && |bus_we);
+wire wr_ack = (decode && bus_we);
 wire rd_ack = (decode && bus_re);
 
 reg reg_rd_ack;
+reg reg_wr_ack;
 
 always @(posedge bus_clk)
   if (!bus_reset_l)
-    reg_rd_ack <= 0;
+    begin
+      reg_rd_ack <= 0;
+      reg_wr_ack <= 0;
+    end
   else
-    reg_rd_ack <= rd_ack;
+    begin
+      reg_rd_ack <= rd_ack;
+      reg_wr_ack <= wr_ack;
+    end
 
 wire [31:0] ram_rd_data;
 
 assign bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START] = reg_rd_ack ? ram_rd_data : 32'd0;
 assign bus_out[BUS_FIELD_RD_ACK] = reg_rd_ack;
-assign bus_out[BUS_FIELD_WR_ACK] = wr_ack;
+assign bus_out[BUS_FIELD_WR_ACK] = reg_wr_ack;
 assign bus_out[BUS_FIELD_IRQ] = 0;
 
 ram_sp_be #(.ADDRWIDTH(LOGSIZE-2)) ram
   (
   .clk (bus_clk),
-  .we ({ bus_we[3] & decode, bus_we[2] & decode, bus_we[1] & decode, bus_we[0] & decode }),
+  .we (bus_be & { 4 { wr_ack } }),
   .addr (bus_addr[LOGSIZE-1:2]),
   .wr_data (bus_wr_data),
   .rd_data (ram_rd_data)

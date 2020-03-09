@@ -6,6 +6,7 @@ module bus_rom
   bus_out
   );
 
+parameter FILE = "notfound.mem";
 parameter ADDR = 0;
 parameter LOGSIZE = 16; // Log2 of memory size in bytes
 parameter SIZE = (1 << LOGSIZE); // Size of this memory in bytes
@@ -39,7 +40,7 @@ assign bus_out[BUS_FIELD_RD_ACK] = reg_rd_ack;
 assign bus_out[BUS_FIELD_WR_ACK] = 0;
 assign bus_out[BUS_FIELD_IRQ] = 0;
 
-rom #(.ADDRWIDTH(LOGSIZE-2)) rom
+rom #(.ADDRWIDTH(LOGSIZE-2), .FILE(FILE)) rom
   (
   .clk (bus_clk),
   .rd_addr (bus_addr[LOGSIZE-1:2]),

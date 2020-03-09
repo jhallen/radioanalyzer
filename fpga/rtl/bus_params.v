@@ -12,12 +12,13 @@ parameter BUS_ADDR_START = BUS_WR_DATA_END; // Address
 parameter BUS_ADDR_END = BUS_ADDR_START + BUS_ADDR_WIDTH;
 
 parameter BUS_IN_CTRL_START = BUS_ADDR_END; // Control bits
-parameter BUS_IN_CTRL_END = BUS_IN_CTRL_START + 7;
+parameter BUS_IN_CTRL_END = BUS_IN_CTRL_START + 8;
 
 parameter BUS_FIELD_RESET_L = BUS_IN_CTRL_START + 0; // Synchronous
 parameter BUS_FIELD_CLK = BUS_IN_CTRL_START + 1; // Clock
 parameter BUS_FIELD_RE = BUS_IN_CTRL_START + 2; // Read enable
-parameter BUS_FIELD_WE = BUS_IN_CTRL_START + 3; // Write enables
+parameter BUS_FIELD_WE = BUS_IN_CTRL_START + 3; // Write enable
+parameter BUS_FIELD_BE = BUS_IN_CTRL_START + 4; // Byte enables
 
 parameter BUS_IN_WIDTH = BUS_IN_CTRL_END;
 

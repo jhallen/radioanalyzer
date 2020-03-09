@@ -5,6 +5,7 @@ module rom
   rd_data
   );
 
+parameter FILE = "notfound.mem";
 parameter ADDRWIDTH=8;
 parameter WORDS = (1 << ADDRWIDTH);
 
@@ -18,7 +19,7 @@ reg [31:0] rd_data;
 reg [31:0] mem[0:WORDS-1];
 
 initial
-  $readmemh("/home/jallen/radioanalyzer/sw/ra.mem", mem);
+  $readmemh(FILE, mem);
 
 always @(posedge clk)
   rd_data <= mem[rd_addr];

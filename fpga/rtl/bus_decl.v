@@ -17,7 +17,8 @@ wire bus_clk = bus_in[BUS_FIELD_CLK]; // Clock
 wire [BUS_DATA_WIDTH-1:0] bus_wr_data = bus_in[BUS_WR_DATA_END-1:BUS_WR_DATA_START]; // Write data
 wire [BUS_ADDR_WIDTH-1:0] bus_addr = bus_in[BUS_ADDR_END-1:BUS_ADDR_START]; // Write address
 wire bus_re = bus_in[BUS_FIELD_RE]; // Read enable
-wire [3:0] bus_we = bus_in[BUS_FIELD_WE+3:BUS_FIELD_WE]; // Write enables
+wire bus_we = bus_in[BUS_FIELD_WE]; // Write enable
+wire [3:0] bus_be = bus_in[BUS_FIELD_BE+3:BUS_FIELD_BE]; // Byte enables
 
 // Bus output fields
 
