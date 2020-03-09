@@ -32,7 +32,7 @@ module simpleuart (
 	input         reg_dat_re,
 	input  [31:0] reg_dat_di,
 	output [31:0] reg_dat_do,
-	output        reg_dat_wait
+	output        reg_dat_ack
 );
 	reg [31:0] cfg_divider;
 
@@ -47,14 +47,15 @@ module simpleuart (
 	reg [31:0] send_divcnt;
 	reg send_dummy;
 
+	reg reg_dat_ack;
+
 	assign reg_div_do = cfg_divider;
 
-	assign reg_dat_wait = reg_dat_we && (send_bitcnt || send_dummy);
 	assign reg_dat_do = recv_buf_valid ? recv_buf_data : ~0;
 
 	always @(posedge clk) begin
 		if (!resetn) begin
-			cfg_divider <= 1;
+			cfg_divider <= 104;
 		end else begin
 			if (reg_div_we[0]) cfg_divider[ 7: 0] <= reg_div_di[ 7: 0];
 			if (reg_div_we[1]) cfg_divider[15: 8] <= reg_div_di[15: 8];
@@ -115,7 +116,9 @@ module simpleuart (
 			send_bitcnt <= 0;
 			send_divcnt <= 0;
 			send_dummy <= 1;
+			reg_dat_ack <= 0;
 		end else begin
+			reg_dat_ack <= 0;
 			if (send_dummy && !send_bitcnt) begin
 				send_pattern <= ~0;
 				send_bitcnt <= 15;
@@ -126,6 +129,7 @@ module simpleuart (
 				send_pattern <= {1'b1, reg_dat_di[7:0], 1'b0};
 				send_bitcnt <= 10;
 				send_divcnt <= 0;
+				reg_dat_ack <= 1;
 			end else
 			if (send_divcnt > cfg_divider && send_bitcnt) begin
 				send_pattern <= {1'b1, send_pattern[9:1]};

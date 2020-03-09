@@ -507,7 +507,12 @@ void cmd_echo()
 void main()
 {
 	reg_leds = 31;
-	reg_uart_clkdiv = 104;
+	// reg_uart_clkdiv = 104;
+	reg_uart_data = 'H';
+	reg_uart_data = 'E';
+	reg_uart_data = 'L';
+	reg_uart_data = 'L';
+	reg_uart_data = 'O';
 	print("Booting..\n");
 
 	reg_leds = 63;

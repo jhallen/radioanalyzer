@@ -17,6 +17,9 @@ input ser_rx;
 
 output [7:0] leds;
 
+
+
+
 // Reset syncronizer
 // Synchronous reset is better in Xilinx for some reason.
 
@@ -72,10 +75,10 @@ wire [BUS_OUT_WIDTH-1:0] bus_out;
 
 assign bus_in[BUS_FIELD_RESET_L] = reset_l;
 assign bus_in[BUS_FIELD_CLK] = clk;
-assign bus_in[BUS_FIELD_WE+3:BUS_FIELD_WE] = mem_wstrb;
+assign bus_in[BUS_FIELD_WE+3:BUS_FIELD_WE] = (mem_wstrb & { 4 { mem_valid } });
 assign bus_in[BUS_ADDR_END-1:BUS_ADDR_START] = mem_addr;
 assign bus_in[BUS_WR_DATA_END-1:BUS_WR_DATA_START] = mem_wdata;
-assign bus_in[BUS_FIELD_RE] = mem_valid;
+assign bus_in[BUS_FIELD_RE] = (mem_valid & ~|mem_wstrb);
 
 assign mem_rdata = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START];
 assign mem_ready = bus_out[BUS_FIELD_WR_ACK] | bus_out[BUS_FIELD_RD_ACK];
@@ -86,7 +89,7 @@ wire [BUS_OUT_WIDTH-1:0] led_reg_bus_out;
 
 wire [31:0] led_reg_out;
 
-assign leds = led_reg_out[7:0];
+// assign leds[6:0] = led_reg_out[6:0];
 
 bus_reg #(.ADDR(32'h0300_0000)) led_reg
   (
@@ -95,6 +98,35 @@ bus_reg #(.ADDR(32'h0300_0000)) led_reg
 
   .out (led_reg_out)
   );
+
+// Blinking LED
+
+reg [7:0] blink;
+reg [23:0] counter;
+reg testit;
+
+assign leds = { blink[7], led_reg_out[6:0] };
+
+always @(posedge clk)
+  if (!reset_l)
+    begin
+      counter <= 12000000;
+      blink <= 8'h55;
+      testit <= 0;
+    end
+  else
+    begin
+      testit <= 0;
+      if (counter)
+        counter <= counter - 1'd1;
+      else
+        begin
+          counter <= 12000000;
+          blink <= ~blink;
+          testit <= 1;
+        end
+    end
+  
 
 // SPI interface config reg
 
@@ -118,6 +150,7 @@ bus_uart #(.ADDR(32'h0200_0004)) uart
   (
   .bus_in (bus_in),
   .bus_out (uart_bus_out),
+  .testit (testit),
   .ser_tx (ser_tx),
   .ser_rx (ser_rx)
   );
@@ -145,7 +178,7 @@ bus_rom #(.ADDR(32'h0001_0000), .LOGSIZE(16)) cpu_rom
 // RISC-V CPU
 
 picorv32 #(
-  .STACKADDR (32'h0001_0000), // End of RAM, initial SP value
+  .STACKADDR (32'h0000_1000), // End of RAM, initial SP value
   .PROGADDR_RESET (32'h0001_0000), // Start of ROM, initial PC value
   .PROGADDR_IRQ (32'h0000_0000),
   .BARREL_SHIFTER (1),

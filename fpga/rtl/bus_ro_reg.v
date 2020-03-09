@@ -27,7 +27,7 @@ input [DATAWIDTH-1:0] in;
 
 `include "bus_decl.v"
 
-wire reg_rd_ack = (bus_rd_addr == ADDR && bus_re);
+wire reg_rd_ack = ({bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == ADDR && bus_re);
 
 wire [BUS_DATA_WIDTH-1:0] shift_data = ({ { BUS_DATA_WIDTH - DATAWIDTH { 1'd0 } }, in } << OFFSET);
 

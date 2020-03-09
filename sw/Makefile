@@ -7,13 +7,13 @@ CFLAGS = -march=rv32imc -ffreestanding
 OBJS = start.o firmware.o
 
 
-ra: ra.bin ra.hex
+ra: ra.mem
 
 ra.elf: sections.lds $(OBJS)
 	riscv32-unknown-elf-ld -Bstatic -T sections.lds --strip-debug -nostdlib -o ra.elf -Map ra.map $(OBJS)
 
-ra.hex: ra.elf
-	riscv32-unknown-elf-objcopy -O verilog ra.elf ra.hex
+ra.mem: ra.bin
+	./bintov ra.bin ra.mem
 
 ra.bin: ra.elf
 	riscv32-unknown-elf-objcopy -O binary ra.elf ra.bin
