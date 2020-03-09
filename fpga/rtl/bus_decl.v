@@ -1,0 +1,27 @@
+// Declare the internal bus structure
+// Break out the structure into wires
+
+wire [BUS_IN_WIDTH-1:0] bus_in;
+
+// No support for wor in Vivado!
+//wor [BUS_OUT_WIDTH-1:0] bus_out; // wor used here so that we can have multiple drivers
+//assign bus_out = 0; // In case nobody is driving.
+
+wire [BUS_OUT_WIDTH-1:0] bus_out;
+
+// Bus input fields
+
+wire bus_reset_l = bus_in[BUS_FIELD_RESET_L]; // Reset
+wire bus_clk = bus_in[BUS_FIELD_CLK]; // Clock
+
+wire [BUS_DATA_WIDTH-1:0] bus_wr_data = bus_in[BUS_WR_DATA_END-1:BUS_WR_DATA_START]; // Write data
+wire [BUS_ADDR_WIDTH-1:0] bus_addr = bus_in[BUS_ADDR_END-1:BUS_ADDR_START]; // Write address
+wire bus_re = bus_in[BUS_FIELD_RE]; // Read enable
+wire [3:0] bus_we = bus_in[BUS_FIELD_WE+3:BUS_FIELD_WE]; // Write enables
+
+// Bus output fields
+
+wire bus_irq = bus_out[BUS_FIELD_IRQ]; // Interrupt request
+wire bus_wr_ack = bus_out[BUS_FIELD_WR_ACK]; // Write acknowledge
+wire bus_rd_ack = bus_out[BUS_FIELD_RD_ACK]; // Read acknowledge
+wire [BUS_DATA_WIDTH-1:0] bus_rd_data = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START]; // Read data

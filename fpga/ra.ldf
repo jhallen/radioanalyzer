@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.2" title="ra" device="LFE5UM5G-85F-8BG381C" default_implementation="impl1">
+    <Options/>
+    <Implementation title="impl1" dir="impl1" description="impl1" synthesis="synplify" default_strategy="Strategy1">
+        <Options def_top="picorv32_wb" top="ra_top"/>
+        <Source name="rtl/ra_top.v" type="Verilog" type_short="Verilog">
+            <Options top_module="ra_top"/>
+        </Source>
+        <Source name="rtl/bus_ram.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="rtl/bus_reg.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="rtl/bus_rom.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="rtl/bus_uart.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="rtl/picorv32.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="rtl/rom.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="rtl/simpleuart.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="rtl/ram_sp_be.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="ra.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="Strategy1" file="ra1.sty"/>
+</BaliProject>
