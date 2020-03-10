@@ -16,7 +16,7 @@ input [ADDRWIDTH-1:0] rd_addr;
 output [31:0] rd_data;
 reg [31:0] rd_data;
 
-reg [31:0] mem[0:WORDS-1];
+reg [31:0] mem[0:WORDS-1] /* synthesis syn_romstyle = "EBR" */;
 
 initial
   $readmemh(FILE, mem);

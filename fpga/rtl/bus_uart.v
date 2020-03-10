@@ -74,7 +74,7 @@ simpleuart raw_uart
   .reg_div_do (div_rd_data),
 
   .reg_dat_we ((decode_dat & |bus_we) | testit),
-  .reg_dat_re (decode_dat & bus_re),
+  .reg_dat_re (dat_rd_ack),
   .reg_dat_di (testit ? 32'h41 : bus_wr_data),
   .reg_dat_do (dat_rd_data),
   .reg_dat_ack (dat_ack)
