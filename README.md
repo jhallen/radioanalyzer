@@ -39,3 +39,20 @@ I tried using LSE at first, but it was crashing with mysterious errors, so I
 switched to Synplify.  But I found that the bash shell scripts used to
 launch Synplify reference /bin/sh, which is dash on Ubuntu.  Simple solution
 is to link /bin/sh to /bin/bash instead of /bin/dash.
+
+## Development board
+
+I'm using Lattice's $99 ECP5 evaluation board, which includes a one year
+license for Lattice Diamond for the LFE5UM5G-85 FPGA.  This version of the
+ECP5 (one which include high speed serdes) normally requires a subscription
+license.  I intend to use the LFE5U FPGA in the final product, which does
+not require a subscription license.
+
+## Serial Cable
+
+In Windows I am able to use the extra ports of the FTDI USB to serial
+adapter chip for the embedded programmer as a console UART for the FPGA.  In
+Linux, all ports of the FTDI chip become disabled, so this can't be done. 
+Worse, the Diamond programmer crashes if you have any other FTDI cable
+plugged into your computer.  The solution is to use a Prolific or SiLabs
+based USB to serial adapter cable for the serial console.
