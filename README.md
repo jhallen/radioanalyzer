@@ -50,7 +50,8 @@ You can get the Lattice Diamond software from here:
 
 https://www.latticesemi.com/en/Products/DesignSoftwareAndIP/FPGAandLDS/LatticeDiamond
 
-I followed these instructions for installing Diamond on Ubuntu:
+It's designed for RedHat, but I followed these instructions for installing
+Diamond on Ubuntu:
 
 https://ycnrg.org/lattice-diamond-on-ubuntu-16-04/
 
@@ -172,6 +173,8 @@ Select an action:
 
 Command> 
 ~~~ 
+
+You can use the GSRN / SW2 button to reset the firmware.
 
 # SoC Bus
 
