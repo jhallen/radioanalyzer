@@ -49,7 +49,7 @@ ECP5 (one which include high speed serdes) normally requires a subscription
 license.  I intend to use the LFE5U FPGA in the final product, which does
 not require a subscription license.
 
-![ECP5 Evaluation Card][doc/ecp5-eval-card.png]
+![ECP5 Evaluation Card](doc/ecp5-eval-card.png)
 
 ## Serial Cable
 
