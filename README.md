@@ -1,9 +1,10 @@
-# radioanalyzer
+# Radio Analyzer Project
 
 Joe's Antique Radio Analyzer
 
-This is a low cost combination tracking sweep generator and oscilloscope
-designed primarily to perform alignment on antique radios.
+This is a low cost instrument continaing both a sweep generator and an
+oscilloscope.  It is designed primarily to perform alignment on antique
+radios.
 
 It is based around a low cost Lattice Semiconductor ECP5 FPGA.  PicoRV32 (a
 RISC-V implementation) is used as the soft processor.  An LCD screen and
@@ -198,7 +199,7 @@ assign bus_out = bus_out_ram | bus_out_rom | bus_out_uart | bus_out_gpio;
 ````
 
 Now when you add a componenent, you must edit two locations of the source
-file, bus this is still not so bad in practice.
+file, but this is still not so bad in practice.
 
 Read acknowledge and write acknowledge should be registered outputs: the
 fastest components have a one flop delay.  The read and write request pulses
@@ -236,7 +237,8 @@ Although downstream components decode the entire 32-bit address bus, the
 upper bits are constant so the necessary logic is reduced.
 
 All bus component instances are required to have the BUS_ADDR parameter.  This
-means it is easy to find the address map by using "grep":
+means it is easy to find the address map by using the UNIX regular
+expression search tool "grep":
 
 	grep '\.BUS_ADDR' *.v
 
