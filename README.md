@@ -101,11 +101,11 @@ with the read acknowledge pulse.  At all other times, components must drive
 zeros on all bus_out signals.
 
 All of the bus_outs are ORed together and fed back to the bus master.  This
-return bus ends up implemented as an OR-tree, which is very efficiently
-implemented within the FPGA (it's a simple tree of LUTs with no control
+return bus ends up implemented as an OR-tree, which is a very efficient
+structure within the FPGA (it's a simple tree of LUTs with no control
 signals).  Small components may not drive all of the bus_out signals- they
-must drive 0 on any unused signals and the synthesis tool will optimize
-them out.
+must drive 0 on any unused signals and the synthesis tool will optimize them
+out.
 
 Better synthesis tools support the Verilog "wor" type.  Xilinx XST (part of
 ISE) and Altera Quartus both support "wor".  Xilinx Vivado and Synplify
