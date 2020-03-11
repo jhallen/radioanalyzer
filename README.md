@@ -30,6 +30,8 @@ not require a subscription license.
 
 # Build Instructions
 
+I use Ubuntu Linux 18.04.
+
 ## RISCV toolchain
 
 The picorv32 project has a script to build it, so:
@@ -48,17 +50,17 @@ You can get the Lattice Diamond software from here:
 
 https://www.latticesemi.com/en/Products/DesignSoftwareAndIP/FPGAandLDS/LatticeDiamond
 
-You will need a license from Lattice.  Your right to it is included with the
-purchase of the ECP5 Evaluation Board, but you need to request it from their
-web-site.  Once you have the license file, copy it to:
-
-	/usr/local/diamond/3.11_x64/license/license.dat
-
 I followed these instructions for installing Diamond on Ubuntu:
 
 https://ycnrg.org/lattice-diamond-on-ubuntu-16-04/
 
 http://timallen.name/index.php/2019/01/14/installing-lattice-diamond-on-ubuntu-18-04/
+
+You will need a license from Lattice.  Your right to it is included with the
+purchase of the ECP5 Evaluation Board, but you need to request it from their
+web-site.  Once you have the license file, copy it to:
+
+	/usr/local/diamond/3.11_x64/license/license.dat
 
 I tried using LSE at first, but it was crashing with mysterious errors, so I
 switched to Synplify.  But I found that the bash shell scripts used to
@@ -109,8 +111,8 @@ Click on "open project" and select ra.ldf:
 ![Diamond Open](doc/diamond-open.png)
 
 The project should open:
-![Diamond Opened](doc/diamond-opened.png)
 
+![Diamond Opened](doc/diamond-opened.png)
 
 Double-click on "Bitstream File" to build the chip:
 
@@ -184,7 +186,6 @@ has:
 * Input signals from the bus
 * Output signals to the bus
 * Bus address
-* Size in bytes
 
 The input signals are gathered into a Verilog bus called "bus_in" (the port
 name is "bus_in").  Bus_in includes:
