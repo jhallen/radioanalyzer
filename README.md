@@ -110,14 +110,16 @@ ISE) and Altera Quartus both support "wor".  Xilinx Vivado and Synplify
 (used by Lattice) unfortunately do not.  If "wor" is supported, all of the
 bus_outs can just be connected to the same signal:
 
-	wire [BUS_IN_SIZE-1:0] bus_in;
-	wor [BUS_OUT_SIZE-1:0] bus_out;
+~~~~
+wire [BUS_IN_SIZE-1:0] bus_in;
+wor [BUS_OUT_SIZE-1:0] bus_out;
 
-	bus_ram my_ram (.bus_in (bus_in), .bus_out (bus_out));
+bus_ram my_ram (.bus_in (bus_in), .bus_out (bus_out));
 
-	bus_rom my_rom (.bus_in (bus_in), .bus_out (bus_out));
+bus_rom my_rom (.bus_in (bus_in), .bus_out (bus_out));
 
-	bus_uart my_uart (.bus_in (bus_in), .bus_out (bus_out), ...);
+bus_uart my_uart (.bus_in (bus_in), .bus_out (bus_out), ...);
+~~~~
 
 This is very tidy, since adding a bus component is purely a local editing
 operation, meaning that only one part of the source file has to be edited.
@@ -125,19 +127,21 @@ operation, meaning that only one part of the source file has to be edited.
 If "wor" is not supported, then the bus_outs have to be explicitly ORed,
 usually at the end of any module containing bus components:
 
-	wire [BUS_IN_SIZE-1:0] bus_in;
-	wire [BUS_OUT_SIZE-1:0] bus_out;
+~~~~
+wire [BUS_IN_SIZE-1:0] bus_in;
+wire [BUS_OUT_SIZE-1:0] bus_out;
 
-	wire [BUS_OUT_SIZE-1:0] bus_out_ram;
-	bus_ram my_ram (.bus_in (bus_in), .bus_out (bus_out_ram));
+wire [BUS_OUT_SIZE-1:0] bus_out_ram;
+bus_ram my_ram (.bus_in (bus_in), .bus_out (bus_out_ram));
 
-	wire [BUS_OUT_SIZE-1:0] bus_out_rom;
-	bus_rom my_rom (.bus_in (bus_in), .bus_out (bus_out_rom));
+wire [BUS_OUT_SIZE-1:0] bus_out_rom;
+bus_rom my_rom (.bus_in (bus_in), .bus_out (bus_out_rom));
 
-	wire [BUS_OUT_SIZE-1:0] bus_out_uart;
-	bus_uart my_uart (.bus_in (bus_in), .bus_out (bus_out_uart), ...);
+wire [BUS_OUT_SIZE-1:0] bus_out_uart;
+bus_uart my_uart (.bus_in (bus_in), .bus_out (bus_out_uart), ...);
 
-	assign bus_out = bus_out_ram | bus_out_rom | bus_out_uart | etc.;
+assign bus_out = bus_out_ram | bus_out_rom | bus_out_uart | etc.;
+~~~~
 
 Now when you add a componenent, you must edit two locations of the source
 file, bus this is still not so bad in practice.
@@ -187,49 +191,55 @@ holds parameters which define the size and field positions of bus_in and
 bus_out.  Typically the old-style module syntax is used so that bus_params
 can be included prior to the first port declaration:
 
-	module bus_module
-	  (
-	  bus_in,
-	  bus_out
-	  );
+~~~~
+module bus_module
+  (
+  bus_in,
+  bus_out
+  );
 
-	`include "bus_params.h"
+`include "bus_params.h"
 
-	input [BUS_IN_WIDTH-1:0] bus_in;
-	output [BUS_OUT_WIDTH-1:0] bus_out;
+input [BUS_IN_WIDTH-1:0] bus_in;
+output [BUS_OUT_WIDTH-1:0] bus_out;
+~~~~
 
 Bus_decl.v breaks out the fields of bus_in and bus_out into individual
 wires.  Bus_params must have been included first:
 
-	`include "bus_decl.h"
+~~~~
+`include "bus_decl.h"
+~~~~
 
 This file has:
 
-	// Declare the internal bus structure
-	// Break out the structure into wires
+~~~~
+// Declare the internal bus structure
+// Break out the structure into wires
 
-	wire [BUS_IN_WIDTH-1:0] bus_in;
+wire [BUS_IN_WIDTH-1:0] bus_in;
 
-	// No support for wor in Vivado!
-	//wor [BUS_OUT_WIDTH-1:0] bus_out; // wor used here so that we can have multiple drivers
-	//assign bus_out = 0; // In case nobody is driving.
+// No support for wor in Vivado!
+//wor [BUS_OUT_WIDTH-1:0] bus_out; // wor used here so that we can have multiple drivers
+//assign bus_out = 0; // In case nobody is driving.
 
-	wire [BUS_OUT_WIDTH-1:0] bus_out;
+wire [BUS_OUT_WIDTH-1:0] bus_out;
 
-	// Bus input fields
+// Bus input fields
 
-	wire bus_reset_l = bus_in[BUS_FIELD_RESET_L]; // Reset
-	wire bus_clk = bus_in[BUS_FIELD_CLK]; // Clock
+wire bus_reset_l = bus_in[BUS_FIELD_RESET_L]; // Reset
+wire bus_clk = bus_in[BUS_FIELD_CLK]; // Clock
 
-	wire [BUS_DATA_WIDTH-1:0] bus_wr_data = bus_in[BUS_WR_DATA_END-1:BUS_WR_DATA_START]; // Write data
-	wire [BUS_ADDR_WIDTH-1:0] bus_addr = bus_in[BUS_ADDR_END-1:BUS_ADDR_START]; // Address
-	wire bus_rd_req = bus_in[BUS_FIELD_RE]; // Read request
-	wire bus_wr_req = bus_in[BUS_FIELD_WE]; // Write request
-	wire [3:0] bus_be = bus_in[BUS_FIELD_BE+3:BUS_FIELD_BE]; // Byte enables
+wire [BUS_DATA_WIDTH-1:0] bus_wr_data = bus_in[BUS_WR_DATA_END-1:BUS_WR_DATA_START]; // Write data
+wire [BUS_ADDR_WIDTH-1:0] bus_addr = bus_in[BUS_ADDR_END-1:BUS_ADDR_START]; // Address
+wire bus_rd_req = bus_in[BUS_FIELD_RE]; // Read request
+wire bus_wr_req = bus_in[BUS_FIELD_WE]; // Write request
+wire [3:0] bus_be = bus_in[BUS_FIELD_BE+3:BUS_FIELD_BE]; // Byte enables
 
-	// Bus output fields
+// Bus output fields
 
-	wire bus_irq = bus_out[BUS_FIELD_IRQ]; // Interrupt request
-	wire bus_wr_ack = bus_out[BUS_FIELD_WR_ACK]; // Write acknowledge
-	wire bus_rd_ack = bus_out[BUS_FIELD_RD_ACK]; // Read acknowledge
-	wire [BUS_DATA_WIDTH-1:0] bus_rd_data = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START]; // Read data
+wire bus_irq = bus_out[BUS_FIELD_IRQ]; // Interrupt request
+wire bus_wr_ack = bus_out[BUS_FIELD_WR_ACK]; // Write acknowledge
+wire bus_rd_ack = bus_out[BUS_FIELD_RD_ACK]; // Read acknowledge
+wire [BUS_DATA_WIDTH-1:0] bus_rd_data = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START]; // Read data
+~~~~
