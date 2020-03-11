@@ -78,8 +78,8 @@ assign bus_in[BUS_FIELD_CLK] = clk;
 assign bus_in[BUS_FIELD_BE+3:BUS_FIELD_BE] = mem_be;
 assign bus_in[BUS_ADDR_END-1:BUS_ADDR_START] = mem_addr;
 assign bus_in[BUS_WR_DATA_END-1:BUS_WR_DATA_START] = mem_wdata;
-assign bus_in[BUS_FIELD_RE] = mem_read;
-assign bus_in[BUS_FIELD_WE] = mem_write;
+assign bus_in[BUS_FIELD_RD_REQ] = mem_read;
+assign bus_in[BUS_FIELD_WR_REQ] = mem_write;
 
 assign mem_rdata = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START];
 assign mem_ready = bus_out[BUS_FIELD_WR_ACK] | bus_out[BUS_FIELD_RD_ACK];
@@ -92,7 +92,7 @@ wire [31:0] led_reg_out;
 
 // assign leds[6:0] = led_reg_out[6:0];
 
-bus_reg #(.ADDR(32'h0300_0000)) led_reg
+bus_reg #(.BUS_ADDR(32'h0300_0000)) led_reg
   (
   .bus_in (bus_in),
   .bus_out (led_reg_bus_out),
@@ -135,7 +135,7 @@ wire [BUS_OUT_WIDTH-1:0] spicfg_bus_out;
 
 wire [31:0] spicfg_out;
 
-bus_reg #(.ADDR(32'h0200_0000)) spicfg_reg
+bus_reg #(.BUS_ADDR(32'h0200_0000)) spicfg_reg
   (
   .bus_in (bus_in),
   .bus_out (spicfg_bus_out),
@@ -147,7 +147,7 @@ bus_reg #(.ADDR(32'h0200_0000)) spicfg_reg
 
 wire [BUS_OUT_WIDTH-1:0] uart_bus_out;
 
-bus_uart #(.ADDR(32'h0200_0004)) uart
+bus_uart #(.BUS_ADDR(32'h0200_0004)) uart
   (
   .bus_in (bus_in),
   .bus_out (uart_bus_out),
@@ -160,7 +160,7 @@ bus_uart #(.ADDR(32'h0200_0004)) uart
 
 wire [BUS_OUT_WIDTH-1:0] cpu_ram_bus_out;
 
-bus_ram #(.ADDR(32'h0000_0000), .LOGSIZE(16)) cpu_ram
+bus_ram #(.BUS_ADDR(32'h0000_0000), .LOGSIZE(16)) cpu_ram
   (
   .bus_in (bus_in),
   .bus_out (cpu_ram_bus_out)
@@ -170,7 +170,7 @@ bus_ram #(.ADDR(32'h0000_0000), .LOGSIZE(16)) cpu_ram
 
 wire [BUS_OUT_WIDTH-1:0] cpu_rom_bus_out;
 
-bus_rom #(.ADDR(32'h0001_0000), .LOGSIZE(16), .FILE("/home/jallen/radioanalyzer/sw/ra.mem")) cpu_rom
+bus_rom #(.BUS_ADDR(32'h0001_0000), .LOGSIZE(16), .INIT_FILE("/home/jallen/radioanalyzer/sw/ra.mem")) cpu_rom
   (
   .bus_in (bus_in),
   .bus_out (cpu_rom_bus_out)

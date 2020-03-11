@@ -11,7 +11,7 @@ module bus_irq_reg
   irq		// Interrupt request output
   );
 
-parameter ADDR=0;
+parameter BUS_ADDR=0;
 parameter OFFSET=0;
 parameter DATAWIDTH=32;
 parameter REG=0;
@@ -36,9 +36,9 @@ reg irq;
 reg [DATAWIDTH-1:0] cur;
 reg [DATAWIDTH-1:0] out;
 
-wire decode = ({ bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == ADDR);
-wire rd_ack = (decode && bus_re);
-wire wr_ack = (decode && bus_we);
+wire decode = ({ bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == BUS_ADDR);
+wire rd_ack = (decode && bus_rd_req);
+wire wr_ack = (decode && bus_wr_req);
 reg reg_rd_ack;
 reg reg_wr_ack;
 

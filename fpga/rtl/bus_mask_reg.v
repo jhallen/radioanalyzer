@@ -12,7 +12,7 @@ module bus_mask_reg
 
 parameter DATAWIDTH = 16; // No. bits (1..16)
 parameter IZ = 0; // Initial value
-parameter ADDR = 0; // Address
+parameter BUS_ADDR = 0; // Address
 parameter REG = 0; // Flag that this is a register
 parameter SIZE = 4;
 
@@ -31,10 +31,10 @@ reg wr_pulse;
 
 `include "bus_decl.v"
 
-wire decode = ({ bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == ADDR);
+wire decode = ({ bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == BUS_ADDR);
 
-wire rd_ack = (decode && bus_re);
-wire wr_ack = (decode && bus_we);
+wire rd_ack = (decode && bus_rd_req);
+wire wr_ack = (decode && bus_wr_req);
 reg reg_rd_ack;
 reg reg_wr_ack;
 

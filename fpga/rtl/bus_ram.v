@@ -6,7 +6,7 @@ module bus_ram
   bus_out
   );
 
-parameter ADDR = 0;
+parameter BUS_ADDR = 0;
 parameter LOGSIZE = 16; // Log2 of memory size in bytes
 parameter SIZE = (1 << LOGSIZE); // Size of this memory in bytes
 
@@ -17,9 +17,9 @@ output [BUS_OUT_WIDTH-1:0] bus_out;
 
 `include "bus_decl.v"
 
-wire decode = (bus_addr >= ADDR && bus_addr < (ADDR + SIZE));
-wire wr_ack = (decode && bus_we);
-wire rd_ack = (decode && bus_re);
+wire decode = (bus_addr >= BUS_ADDR && bus_addr < (BUS_ADDR + SIZE));
+wire wr_ack = (decode && bus_wr_req);
+wire rd_ack = (decode && bus_rd_req);
 
 reg reg_rd_ack;
 reg reg_wr_ack;

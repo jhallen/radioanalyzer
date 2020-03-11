@@ -11,7 +11,7 @@ module bus_ro_reg
 
 parameter DATAWIDTH = 32; // No. bits (1..32)
 parameter OFFSET = 0; // Bit position (0..31)
-parameter ADDR = 0; // Address
+parameter BUS_ADDR = 0; // Address
 parameter REG = 0; // Flag that this is a register
 parameter SIZE = 4;
 
@@ -27,7 +27,7 @@ input [DATAWIDTH-1:0] in;
 
 `include "bus_decl.v"
 
-wire rd_ack = ({bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == ADDR && bus_re);
+wire rd_ack = ({bus_addr[BUS_ADDR_WIDTH-1:2], 2'd0 } == BUS_ADDR && bus_rd_req);
 reg reg_rd_ack;
 
 wire [BUS_DATA_WIDTH-1:0] shift_data = ({ { BUS_DATA_WIDTH - DATAWIDTH { 1'd0 } }, in } << OFFSET);

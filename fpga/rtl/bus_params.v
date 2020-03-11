@@ -16,11 +16,11 @@ parameter BUS_IN_CTRL_END = BUS_IN_CTRL_START + 8;
 
 parameter BUS_FIELD_RESET_L = BUS_IN_CTRL_START + 0; // Synchronous
 parameter BUS_FIELD_CLK = BUS_IN_CTRL_START + 1; // Clock
-parameter BUS_FIELD_RE = BUS_IN_CTRL_START + 2; // Read enable
-parameter BUS_FIELD_WE = BUS_IN_CTRL_START + 3; // Write enable
+parameter BUS_FIELD_RD_REQ = BUS_IN_CTRL_START + 2; // Read enable
+parameter BUS_FIELD_WR_REQ = BUS_IN_CTRL_START + 3; // Write enable
 parameter BUS_FIELD_BE = BUS_IN_CTRL_START + 4; // Byte enables
 
-parameter BUS_IN_WIDTH = BUS_IN_CTRL_END;
+parameter BUS_IN_WIDTH = BUS_IN_CTRL_END; // Size of bus_in
 
 // Bus output bits
 
@@ -29,7 +29,7 @@ parameter BUS_RD_DATA_END = BUS_RD_DATA_START + BUS_DATA_WIDTH;
 parameter BUS_OUT_CTRL_START = BUS_RD_DATA_END; // Control bits
 parameter BUS_OUT_CTRL_END = BUS_OUT_CTRL_START + 3;
 
-parameter BUS_OUT_WIDTH = BUS_OUT_CTRL_END;
+parameter BUS_OUT_WIDTH = BUS_OUT_CTRL_END; // Size of bus_out
 
 parameter BUS_FIELD_WR_ACK = BUS_OUT_CTRL_START + 0; // Write ack
 parameter BUS_FIELD_RD_ACK = BUS_OUT_CTRL_START + 1; // Read ack

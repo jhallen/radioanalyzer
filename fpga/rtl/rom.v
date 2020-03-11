@@ -5,7 +5,7 @@ module rom
   rd_data
   );
 
-parameter FILE = "notfound.mem";
+parameter INIT_FILE = "notfound.mem";
 parameter ADDRWIDTH=8;
 parameter WORDS = (1 << ADDRWIDTH);
 
@@ -19,7 +19,7 @@ reg [31:0] rd_data;
 reg [31:0] mem[0:WORDS-1] /* synthesis syn_romstyle = "EBR" */;
 
 initial
-  $readmemh(FILE, mem);
+  $readmemh(INIT_FILE, mem);
 
 always @(posedge clk)
   rd_data <= mem[rd_addr];
