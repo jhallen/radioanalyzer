@@ -4,184 +4,59 @@ Joe's Antique Radio Analyzer
 
 This is a low cost instrument continaing both a sweep generator and an
 oscilloscope.  It is designed primarily to perform alignment on antique
-radios.
+radios, but could be used a more general purpose test instrument:
 
-It is based around a low cost Lattice Semiconductor ECP5 FPGA.  PicoRV32 (a
-RISC-V implementation) is used as the soft processor.  An LCD screen and
-touch panel user interface are included in the soft SoC made from this
-processor.
+The signal/sweep generator must generate an FM stereo signal up to 108 MHz,
+suitable for commercial broadcast receivers (up to 148 MHz for 2 meter ham
+radio would be preferred).  It must generate modulated AM up to 1.8 MHz (up
+to 30 MHz and with SSB support would be preferred for ham radio use).
+
+The output should be controlled with an attenuator.
+
+The oscilloscope should have at least 10 MHz bandwidth- suitable for viewing
+the frequency response of a circuit driven by the sweep generator and
+measuring with an RF detector probe, but also suitable for TV repair work. 
+It should have a good oscilloscope front-end: 1M impedance, attenuator /
+variable-gain amplifier and calibration.
+
+# Design
+
+The analyzer is based around a low cost Lattice Semiconductor ECP5 FPGA. 
+[PicoRV32](https://github.com/cliffordwolf/picorv32) (a RISC-V
+implementation tailored for FPGAs) is used as the soft processor.  An LCD
+screen and touch panel user interface are included in the soft SoC made from
+this processor.
 
 The signal generator uses a DDS implemented in the FPGA.  An expensive DAC
 is avoided by using a delta-sigma modulator enhanced with a digital to time
 converter.
 
+See this paper: [https://pdfs.semanticscholar.org/a947/d7774c73c58028026ef628da1f0323acfce6.pdf](https://pdfs.semanticscholar.org/a947/d7774c73c58028026ef628da1f0323acfce6.pdf)
+
 The expensive ADCs needed for the oscilloscope are avoided by using an LVDS
 input comparator in combination with a time to digital converter.
 
+See this paper: [https://cas.tudelft.nl/pubs/Homulle15fpga.pdf](https://cas.tudelft.nl/pubs/Homulle15fpga.pdf).
+
+The oscilloscope front end will use discrete components to avoid expensive
+ICs.  This is the approach taken by low cost oscilloscope manufacturers. 
+See:
+
+[EEVblog #675 - How To Reverse Engineer A Rigol DS1054Z](https://www.youtube.com/watch?v=lJVrTV_BeGg)
+
 # Development board
 
-I'm using Lattice's $99 ECP5 evaluation board, which includes a one year
-license for Lattice Diamond for the LFE5UM5G-85 FPGA.  This version of the
-ECP5 (one which includes high speed serdes) normally requires a subscription
-license.  I intend to use the LFE5U FPGA in the final product, which does
-not require a subscription license.
+I'm starting with Lattice's $99 ECP5 evaluation board, which includes a one
+year license for Lattice Diamond for the LFE5UM5G-85 FPGA.  This version of
+the ECP5 (one which includes high speed serdes) normally requires a
+subscription license.  I intend to use the LFE5U FPGA in the final product,
+which does not require a subscription license.
 
 ![ECP5 Evaluation Card](doc/ecp5-eval-card.png)
 
 # Build Instructions
 
-I use Ubuntu Linux 18.04.
-
-## Simulation
-
-I use Icarus Verilog and gtkwave:
-
-	apt-get install iverilog
-	apt-get install gtkwave
-
-## RISCV toolchain
-
-The picorv32 project has a script to build it, so:
-
-	git clone https://github.com/cliffordwolf/picorv32/tree/v1.0
-
-Follow instructions in README.md file, starting with "make download-tools".
-
-## Lattice Diamond
-
-You need the ECP5 Evaluation Board, you can get one from here:
-
-http://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/ECP5EvaluationBoard
-
-You can get the Lattice Diamond software from here:
-
-https://www.latticesemi.com/en/Products/DesignSoftwareAndIP/FPGAandLDS/LatticeDiamond
-
-It's designed for RedHat, but I followed these instructions for installing
-Diamond on Ubuntu:
-
-https://ycnrg.org/lattice-diamond-on-ubuntu-16-04/
-
-http://timallen.name/index.php/2019/01/14/installing-lattice-diamond-on-ubuntu-18-04/
-
-You will need a license from Lattice.  Your right to it is included with the
-purchase of the ECP5 Evaluation Board, but you need to request it from their
-web-site.  Once you have the license file, copy it to:
-
-	/usr/local/diamond/3.11_x64/license/license.dat
-
-I tried using LSE at first, but it was crashing with mysterious errors, so I
-switched to Synplify.  But I found that the bash shell scripts used to
-launch Synplify reference /bin/sh, which is dash on Ubuntu.  Simple solution
-is to link /bin/sh to /bin/bash instead of /bin/dash.
-
-## Serial Cable
-
-In Windows I am able to use the extra ports of the FTDI USB to serial
-adapter chip for the embedded programmer as a console UART for the FPGA.  In
-Linux, all ports of the FTDI chip become disabled, so this can't be done. 
-Worse, the Diamond programmer crashes if you have any other FTDI cable
-plugged into your computer.  The solution is to use a Prolific or SiLabs
-based USB to serial adapter cable for the serial console.
-
-As shown in the photo above, the serial console cable should be connected to
-J40:
-
-* K4 is serial ouptut
-* P1 is serial input
-
-The baud rate is 115200.  In Linux, I recommend Picocom:
-
-	apt-get install picocom
-	sudo picocom --baud 115200 /dev/ttyUSB0
-
-## Software build
-
-	cd sw
-	PATH=/opt/riscv32imc/bin:$PATH
-	make
-
-This creates "ra.mem" which is currently used to initialize the firmware ROM
-within the FPGA.
-
-## FPGA build
-
-Start diamond:
-
-	/usr/local/diamond/3.11_x64/bin/lin64/diamond
-
-You should see:
-
-![Diamond Startup](doc/diamond-start.png)
-
-Click on "open project" and select ra.ldf:
-
-![Diamond Open](doc/diamond-open.png)
-
-The project should open:
-
-![Diamond Opened](doc/diamond-opened.png)
-
-Double-click on "Bitstream File" to build the chip:
-
-![Diamond Build](doc/diamond-build.png)
-
-Eventually it will finish:
-
-![Diamond Done](doc/diamond-done.png)
-
-Open the programmer with Tools -> Programmer, and double-click the the
-download icon:
-
-![Diamond Programmer](doc/diamond-programmer.png)
-
-The programming should start:
-
-![Diamond Programming](doc/diamond-programming.png)
-
-Once the FPGA is programmed, the firmware will start and you should see this
-one the serial console:
-
-~~~
-Booting..
-Press ENTER to continue..
-
-  ____  _          ____         ____
- |  _ \(_) ___ ___/ ___|  ___  / ___|
- | |_) | |/ __/ _ \___ \ / _ \| |
- |  __/| | (_| (_) |__) | (_) | |___
- |_|   |_|\___\___/____/ \___/ \____|
-
-Total memory: 64 KiB
-
-Running memtest ..... passed
-
-SPI State:
-  LATENCY 0
-  DDR OFF
-  QSPI OFF
-  CRM OFF
-
-
-Select an action:
-
-   [1] Read SPI Flash ID
-   [2] Read SPI Config Regs
-   [3] Switch to default mode
-   [4] Switch to Dual I/O mode
-   [5] Switch to Quad I/O mode
-   [6] Switch to Quad DDR mode
-   [7] Toggle continuous read mode
-   [9] Run simplistic benchmark
-   [0] Benchmark all configs
-   [M] Run Memtest
-   [S] Print SPI state
-   [e] Echo UART
-
-Command> 
-~~~ 
-
-You can use the GSRN / SW2 button to reset the firmware.
+[Build Instructions](doc/build.md)
 
 # SoC Bus
 
