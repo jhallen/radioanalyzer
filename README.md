@@ -32,6 +32,13 @@ not require a subscription license.
 
 I use Ubuntu Linux 18.04.
 
+## Simulation
+
+I use Icarus Verilog and gtkwave:
+
+	apt-get install iverilog
+	apt-get install gtkwave
+
 ## RISCV toolchain
 
 The picorv32 project has a script to build it, so:
