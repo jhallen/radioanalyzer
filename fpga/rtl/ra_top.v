@@ -170,7 +170,8 @@ bus_ram #(.BUS_ADDR(32'h0000_0000), .LOGSIZE(16)) cpu_ram
 
 wire [BUS_OUT_WIDTH-1:0] cpu_rom_bus_out;
 
-bus_rom #(.BUS_ADDR(32'h0001_0000), .LOGSIZE(16), .INIT_FILE("/home/jallen/radioanalyzer/sw/ra.mem")) cpu_rom
+// Note that path for INIT_FILE is relative to diamond implementation directory.
+bus_rom #(.BUS_ADDR(32'h0001_0000), .LOGSIZE(16), .INIT_FILE("../../sw/ra.mem")) cpu_rom
   (
   .bus_in (bus_in),
   .bus_out (cpu_rom_bus_out)
