@@ -56,7 +56,7 @@ which does not require a subscription license.
 
 # Build Instructions
 
-[Build Instructions](doc/build.md)
+See [Build Instructions](doc/build.md)
 
 # SoC Bus
 

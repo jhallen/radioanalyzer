@@ -1,33 +1,3 @@
-# Radio Analyzer Project
-
-Joe's Antique Radio Analyzer
-
-This is a low cost instrument continaing both a sweep generator and an
-oscilloscope.  It is designed primarily to perform alignment on antique
-radios.
-
-It is based around a low cost Lattice Semiconductor ECP5 FPGA.  PicoRV32 (a
-RISC-V implementation) is used as the soft processor.  An LCD screen and
-touch panel user interface are included in the soft SoC made from this
-processor.
-
-The signal generator uses a DDS implemented in the FPGA.  An expensive DAC
-is avoided by using a delta-sigma modulator enhanced with a digital to time
-converter.
-
-The expensive ADCs needed for the oscilloscope are avoided by using an LVDS
-input comparator in combination with a time to digital converter.
-
-# Development board
-
-I'm using Lattice's $99 ECP5 evaluation board, which includes a one year
-license for Lattice Diamond for the LFE5UM5G-85 FPGA.  This version of the
-ECP5 (one which includes high speed serdes) normally requires a subscription
-license.  I intend to use the LFE5U FPGA in the final product, which does
-not require a subscription license.
-
-![ECP5 Evaluation Card](ecp5-eval-card.png)
-
 # Build Instructions
 
 I use Ubuntu Linux 18.04.
