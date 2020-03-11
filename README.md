@@ -27,6 +27,16 @@ implementation tailored for FPGAs) is used as the soft processor.  An LCD
 screen and touch panel user interface are included in the soft SoC made from
 this processor.
 
+Normally I would not recommend using a soft core processor because FPGA
+gates are expensive.  However in this particular case, where I already need
+an FPGA, and where conventional microcontrollers with video support
+cost more than one step size change of the ECP5 FPGA, it's worth it.
+
+The PicoRV32 has a lot of value even though it's a relatively simple CPU. 
+The value is that it (and RISC-V) is license free, not encumbered by patents
+and all of the work to port GCC and LLVM/Clang has already been done.  These
+toolchains represents thousands of man-years of effort.
+
 The signal generator uses a DDS implemented in the FPGA.  An expensive DAC
 is avoided by using a delta-sigma modulator enhanced with a digital to time
 converter.
@@ -53,6 +63,12 @@ subscription license.  I intend to use the LFE5U FPGA in the final product,
 which does not require a subscription license.
 
 ![ECP5 Evaluation Card](doc/ecp5-eval-card.png)
+
+There is an open source FPGA tool chain that works with ECP5 available
+called Project Trellis, see
+[https://github.com/SymbiFlow/prjtrellis](https://github.com/SymbiFlow/prjtrellis)
+
+Even so, it's relatively new so I will have a Diamond build path.
 
 # Build Instructions
 
@@ -83,7 +99,7 @@ name is "bus_in").  Bus_in includes:
 * Clock
 * Synchronous reset
 
-The output signals gathered into a Verilog bus called "bus_out" (the port
+The output signals are gathered into a Verilog bus called "bus_out" (the port
 name is "bus_out").  But_out includes:
 
 * Read acknowledge
