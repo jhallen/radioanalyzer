@@ -1,7 +1,7 @@
 MEMORY
 {
     FLASH (rx)      : ORIGIN = 0x00010000, LENGTH = 0x10000 /* ROM: 64 KB */
-    RAM (xrw)       : ORIGIN = 0x00000000, LENGTH = 0x10000 /* RAM: 64 KB */
+    RAM (xrw)       : ORIGIN = 0x00008000, LENGTH = 0x08000 /* RAM: 64 KB */
 }
 
 SECTIONS {

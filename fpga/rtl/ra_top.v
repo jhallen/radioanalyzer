@@ -182,7 +182,7 @@ bus_rom #(.BUS_ADDR(32'h0001_0000), .LOGSIZE(16), .INIT_FILE("../../sw/ra.mem"))
 picorv32 #(
   .STACKADDR (32'h0000_1000), // End of RAM, initial SP value
   .PROGADDR_RESET (32'h0001_0000), // Start of ROM, initial PC value
-  .PROGADDR_IRQ (32'h0000_0000),
+  .PROGADDR_IRQ (32'h0001_0010),
   .BARREL_SHIFTER (1),
   .COMPRESSED_ISA (1),
   .ENABLE_COUNTERS (1),

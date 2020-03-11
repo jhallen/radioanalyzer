@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define MEM_TOTAL 0x10000 /* 128 KB */
+#define MEM_TOTAL 0x8000 /* 128 KB */
 
 // a pointer to this is a null pointer, but the compiler does not
 // know that because "sram" is a linker symbol from sections.lds.
@@ -30,6 +30,8 @@ extern uint32_t sram;
 #define reg_uart_clkdiv (*(volatile uint32_t*)0x02000004)
 #define reg_uart_data (*(volatile uint32_t*)0x02000008)
 #define reg_leds (*(volatile uint32_t*)0x03000000)
+
+
 
 // --------------------------------------------------------
 
@@ -244,8 +246,8 @@ void cmd_memtest()
 	int stride = 256;
 	uint32_t state;
 
-	volatile uint32_t *base_word = (uint32_t *) 0;
-	volatile uint8_t *base_byte = (uint8_t *) 0;
+	volatile uint32_t *base_word = (uint32_t *) 0x8000;
+	volatile uint8_t *base_byte = (uint8_t *) 0x8000;
 
 	print("Running memtest ");
 
@@ -508,11 +510,6 @@ void main()
 {
 	reg_leds = 31;
 	// reg_uart_clkdiv = 104;
-	reg_uart_data = 'H';
-	reg_uart_data = 'E';
-	reg_uart_data = 'L';
-	reg_uart_data = 'L';
-	reg_uart_data = 'O';
 	print("Booting..\n");
 
 	reg_leds = 63;
@@ -613,4 +610,135 @@ void main()
 			break;
 		}
 	}
+}
+
+uint32_t *irq(uint32_t *regs, uint32_t irqs)
+{
+	static unsigned int ext_irq_4_count = 0;
+	static unsigned int ext_irq_5_count = 0;
+	static unsigned int timer_irq_count = 0;
+
+	// checking compressed isa q0 reg handling
+	if ((irqs & 6) != 0) {
+		uint32_t pc = (regs[0] & 1) ? regs[0] - 3 : regs[0] - 4;
+		uint32_t instr = *(uint16_t*)pc;
+
+		if ((instr & 3) == 3)
+			instr = instr | (*(uint16_t*)(pc + 2)) << 16;
+
+		if (((instr & 3) != 3) != (regs[0] & 1)) {
+			print("Mismatch between q0 LSB and decoded instruction word! q0=0x");
+			print_hex(regs[0], 8);
+			print(", instr=0x");
+			if ((instr & 3) == 3)
+				print_hex(instr, 8);
+			else
+				print_hex(instr, 4);
+			print("\n");
+			__asm__ volatile ("ebreak");
+		}
+	}
+
+	if ((irqs & (1<<4)) != 0) {
+		ext_irq_4_count++;
+		print("[EXT-IRQ-4]\n");
+	}
+
+	if ((irqs & (1<<5)) != 0) {
+		ext_irq_5_count++;
+		print("[EXT-IRQ-5]\n");
+	}
+
+	if ((irqs & 1) != 0) {
+		timer_irq_count++;
+		print("[TIMER-IRQ]\n");
+	}
+
+	if ((irqs & 6) != 0)
+	{
+		uint32_t pc = (regs[0] & 1) ? regs[0] - 3 : regs[0] - 4;
+		uint32_t instr = *(uint16_t*)pc;
+
+		if ((instr & 3) == 3)
+			instr = instr | (*(uint16_t*)(pc + 2)) << 16;
+
+		print("\n");
+		print("------------------------------------------------------------\n");
+
+		if ((irqs & 2) != 0) {
+			if (instr == 0x00100073 || instr == 0x9002) {
+				print("EBREAK instruction at 0x");
+				print_hex(pc, 8);
+				print("\n");
+			} else {
+				print("Illegal Instruction at 0x");
+				print_hex(pc, 8);
+				print(": 0x");
+				print_hex(instr, ((instr & 3) == 3) ? 8 : 4);
+				print("\n");
+			}
+		}
+
+		if ((irqs & 4) != 0) {
+			print("Bus error in Instruction at 0x");
+			print_hex(pc, 8);
+			print(": 0x");
+			print_hex(instr, ((instr & 3) == 3) ? 8 : 4);
+			print("\n");
+		}
+
+		for (int i = 0; i < 8; i++)
+		for (int k = 0; k < 4; k++)
+		{
+			int r = i + k*8;
+
+			if (r == 0) {
+				print("pc  ");
+			} else
+			if (r < 10) {
+				putchar('x');
+				putchar('0' + r);
+				putchar(' ');
+				putchar(' ');
+			} else
+			if (r < 20) {
+				putchar('x');
+				putchar('1');
+				putchar('0' + r - 10);
+				putchar(' ');
+			} else
+			if (r < 30) {
+				putchar('x');
+				putchar('2');
+				putchar('0' + r - 20);
+				putchar(' ');
+			} else {
+				putchar('x');
+				putchar('3');
+				putchar('0' + r - 30);
+				putchar(' ');
+			}
+
+			print_hex(regs[r], 8);
+			print(k == 3 ? "\n" : "    ");
+		}
+
+		print("------------------------------------------------------------\n");
+
+		print("Number of fast external IRQs counted: ");
+		print_dec(ext_irq_4_count);
+		print("\n");
+
+		print("Number of slow external IRQs counted: ");
+		print_dec(ext_irq_5_count);
+		print("\n");
+
+		print("Number of timer IRQs counted: ");
+		print_dec(timer_irq_count);
+		print("\n");
+
+		__asm__ volatile ("ebreak");
+	}
+
+	return regs;
 }
