@@ -45,7 +45,7 @@ is to link /bin/sh to /bin/bash instead of /bin/dash.
 
 I'm using Lattice's $99 ECP5 evaluation board, which includes a one year
 license for Lattice Diamond for the LFE5UM5G-85 FPGA.  This version of the
-ECP5 (one which include high speed serdes) normally requires a subscription
+ECP5 (one which includes high speed serdes) normally requires a subscription
 license.  I intend to use the LFE5U FPGA in the final product, which does
 not require a subscription license.
 
@@ -62,12 +62,12 @@ based USB to serial adapter cable for the serial console.
 
 # SoC Bus
 
-I use a Verilog source code centered approach to SoC design.  This means
-that instead of using some external tool to generate the SoC, I design the
-SoC bus to be very convenient to use from Verilog source code.  The system
-is designed right in Verilog, no external tools needed.
+I use a Verilog source code centered approach to System On Chip (SoC)
+design.  This means that instead of using some external tool to generate the
+SoC, I design the SoC bus to be very convenient to use from Verilog source
+code.  The system is designed right in Verilog, no external tools needed.
 
-Consider an SoC component, such a CSR (Control and Status Register).  It
+Consider a SoC component, such a CSR (Control and Status Register).  It
 has:
 
 * Input signals from the bus
