@@ -2,9 +2,9 @@
 
 Joe's Antique Radio Analyzer
 
-This is a low cost instrument continaing both a sweep generator and an
+This is a low cost instrument containing both a sweep generator and an
 oscilloscope.  It is designed primarily to perform alignment on antique
-radios, but could be used a more general purpose test instrument:
+radios, but could be used as a more general purpose test instrument:
 
 The signal/sweep generator must generate an FM stereo signal up to 108 MHz,
 suitable for commercial broadcast receivers (up to 148 MHz for 2 meter ham
@@ -17,7 +17,7 @@ The oscilloscope should have at least 10 MHz bandwidth- suitable for viewing
 the frequency response of a circuit driven by the sweep generator and
 measuring with an RF detector probe, but also suitable for TV repair work. 
 It should have a good oscilloscope front-end: 1M impedance, attenuator /
-variable-gain amplifier and calibration.
+variable-gain amplifier and self-calibration.
 
 # Design
 
