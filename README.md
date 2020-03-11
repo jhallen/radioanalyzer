@@ -184,7 +184,7 @@ upper bits are constant so the necessary logic is reduced.
 All bus component instances are required to have the BUS_ADDR parameter.  This
 means it is easy to find the address map by using "grep":
 
-	grep '\\.BUS_ADDR' *.v
+	grep '\.BUS_ADDR' *.v
 
 Two include files help with declaring bus_in and bus_out.  Bus_params.v
 holds parameters which define the size and field positions of bus_in and
