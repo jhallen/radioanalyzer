@@ -110,7 +110,7 @@ ISE) and Altera Quartus both support "wor".  Xilinx Vivado and Synplify
 (used by Lattice) unfortunately do not.  If "wor" is supported, all of the
 bus_outs can just be connected to the same signal:
 
-~~~~
+```verilog
 wire [BUS_IN_SIZE-1:0] bus_in;
 wor [BUS_OUT_SIZE-1:0] bus_out;
 
@@ -119,7 +119,7 @@ bus_ram my_ram (.bus_in (bus_in), .bus_out (bus_out));
 bus_rom my_rom (.bus_in (bus_in), .bus_out (bus_out));
 
 bus_uart my_uart (.bus_in (bus_in), .bus_out (bus_out), ...);
-~~~~
+````
 
 This is very tidy, since adding a bus component is purely a local editing
 operation, meaning that only one part of the source file has to be edited.
@@ -127,7 +127,7 @@ operation, meaning that only one part of the source file has to be edited.
 If "wor" is not supported, then the bus_outs have to be explicitly ORed,
 usually at the end of any module containing bus components:
 
-~~~~
+```verilog
 wire [BUS_IN_SIZE-1:0] bus_in;
 wire [BUS_OUT_SIZE-1:0] bus_out;
 
@@ -141,7 +141,7 @@ wire [BUS_OUT_SIZE-1:0] bus_out_uart;
 bus_uart my_uart (.bus_in (bus_in), .bus_out (bus_out_uart), ...);
 
 assign bus_out = bus_out_ram | bus_out_rom | bus_out_uart | etc.;
-~~~~
+````
 
 Now when you add a componenent, you must edit two locations of the source
 file, bus this is still not so bad in practice.
@@ -191,7 +191,7 @@ holds parameters which define the size and field positions of bus_in and
 bus_out.  Typically the old-style module syntax is used so that bus_params
 can be included prior to the first port declaration:
 
-~~~~
+```verilog
 module bus_module
   (
   bus_in,
@@ -202,18 +202,18 @@ module bus_module
 
 input [BUS_IN_WIDTH-1:0] bus_in;
 output [BUS_OUT_WIDTH-1:0] bus_out;
-~~~~
+````
 
 Bus_decl.v breaks out the fields of bus_in and bus_out into individual
 wires.  Bus_params must have been included first:
 
-~~~~
+```verilog
 `include "bus_decl.h"
-~~~~
+````
 
 This file has:
 
-~~~~
+```verilog
 // Declare the internal bus structure
 // Break out the structure into wires
 
@@ -242,4 +242,4 @@ wire bus_irq = bus_out[BUS_FIELD_IRQ]; // Interrupt request
 wire bus_wr_ack = bus_out[BUS_FIELD_WR_ACK]; // Write acknowledge
 wire bus_rd_ack = bus_out[BUS_FIELD_RD_ACK]; // Read acknowledge
 wire [BUS_DATA_WIDTH-1:0] bus_rd_data = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START]; // Read data
-~~~~
+````
