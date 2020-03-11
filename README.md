@@ -103,7 +103,9 @@ zeros on all bus_out signals.
 All of the bus_outs are ORed together and fed back to the bus master.  This
 return bus ends up implemented as an OR-tree, which is very efficiently
 implemented within the FPGA (it's a simple tree of LUTs with no control
-signals).
+signals).  Small components may not drive all of the bus_out signals- they
+must drive 0 on any unused signals and the synthesis tool will optimize
+them out.
 
 Better synthesis tools support the Verilog "wor" type.  Xilinx XST (part of
 ISE) and Altera Quartus both support "wor".  Xilinx Vivado and Synplify
@@ -112,13 +114,36 @@ bus_outs can just be connected to the same signal:
 
 ```verilog
 wire [BUS_IN_SIZE-1:0] bus_in;
+
 wor [BUS_OUT_SIZE-1:0] bus_out;
+assign bus_out = 0; // In case no other driver of bus_out...
 
-bus_ram my_ram (.bus_in (bus_in), .bus_out (bus_out));
+bus_ram #(.BUS_ADDR(32'h0000_0000), .SIZE(65536)) my_ram
+  (
+  .bus_in (bus_in),
+  .bus_out (bus_out)
+  );
 
-bus_rom my_rom (.bus_in (bus_in), .bus_out (bus_out));
+bus_rom #(.BUS_ADDR(32'h0001_0000), .SIZE(65536)) my_rom
+  (
+  .bus_in (bus_in),
+  .bus_out (bus_out)
+  );
 
-bus_uart my_uart (.bus_in (bus_in), .bus_out (bus_out), ...);
+bus_reg #(.BUS_ADDR(32'h0200_0000)) my_gpio
+  (
+  .bus_in (bus_in),
+  .bus_out (bus_out),
+  .out (leds)
+  );
+
+bus_uart #(.BUS_ADDR(32'h0200_0004)) my_uart
+  (
+  .bus_in (bus_in),
+  .bus_out (bus_out),
+  .ser_tx (ser_tx),
+  .ser_rx (ser_rx)
+  );
 ````
 
 This is very tidy, since adding a bus component is purely a local editing
@@ -132,15 +157,44 @@ wire [BUS_IN_SIZE-1:0] bus_in;
 wire [BUS_OUT_SIZE-1:0] bus_out;
 
 wire [BUS_OUT_SIZE-1:0] bus_out_ram;
-bus_ram my_ram (.bus_in (bus_in), .bus_out (bus_out_ram));
+
+bus_ram #(.BUS_ADDR(32'h0000_0000), .SIZE(65536)) my_ram
+  (
+  .bus_in (bus_in),
+  .bus_out (bus_out_ram)
+  );
 
 wire [BUS_OUT_SIZE-1:0] bus_out_rom;
-bus_rom my_rom (.bus_in (bus_in), .bus_out (bus_out_rom));
+
+bus_rom #(.BUS_ADDR(32'h0001_0000), .SIZE(65536)) my_rom
+  (
+  .bus_in (bus_in),
+  .bus_out (bus_out_rom)
+  );
+
+wire [BUS_OUT_SIZE-1:0] bus_out_gpio;
+
+bus_reg #(.BUS_ADDR(32'h0200_0000)) my_gpio
+  (
+  .bus_in (bus_in),
+  .bus_out (bus_out_gpio),
+
+  .out (leds)
+  );
 
 wire [BUS_OUT_SIZE-1:0] bus_out_uart;
-bus_uart my_uart (.bus_in (bus_in), .bus_out (bus_out_uart), ...);
 
-assign bus_out = bus_out_ram | bus_out_rom | bus_out_uart | etc.;
+bus_uart #(.BUS_ADDR(32'h0200_0004)) my_uart
+  (
+  .bus_in (bus_in),
+  .bus_out (bus_out_uart),
+  .ser_tx (ser_tx),
+  .ser_rx (ser_rx)
+  );
+
+// bus_out OR-tree
+
+assign bus_out = bus_out_ram | bus_out_rom | bus_out_uart | bus_out_gpio;
 ````
 
 Now when you add a componenent, you must edit two locations of the source
