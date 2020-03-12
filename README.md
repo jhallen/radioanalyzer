@@ -6,7 +6,7 @@ This is a low cost instrument containing both a sweep generator and an
 oscilloscope.  It is designed primarily to perform alignment on antique
 radios, and is intended to replace classic marker sweep generators.
 
-The signal generator must be capacble of generating an FM stereo signal up
+The signal generator must be capable of generating an FM stereo signal up
 to 108 MHz, suitable for commercial broadcast receivers (up to 148 MHz for 2
 meter ham radio would be preferred).  It must generate modulated AM up to
 1.8 MHz (up to 30 MHz and with SSB support would be preferred for ham radio
