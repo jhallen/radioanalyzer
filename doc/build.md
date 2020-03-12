@@ -4,10 +4,10 @@ I use Ubuntu Linux 18.04.
 
 ## Simulation
 
-I use Icarus Verilog and gtkwave:
+I use Icarus Verilog for simulation and gtkwave for waveform viewing:
 
-	apt-get install iverilog
-	apt-get install gtkwave
+	sudo apt-get install iverilog
+	sudo apt-get install gtkwave
 
 ## RISCV toolchain
 
@@ -40,22 +40,26 @@ web-site.  Once you have the license file, copy it to:
 
 	/usr/local/diamond/3.11_x64/license/license.dat
 
-I tried using LSE at first, but it was crashing with mysterious errors, so I
-switched to Synplify.  But I found that the bash shell scripts used to
-launch Synplify reference /bin/sh, which is dash on Ubuntu.  Simple solution
-is to link /bin/sh to /bin/bash instead of /bin/dash.
+I tried using LSE (Lattice Synthesis Engine) at first, but it was crashing
+with mysterious errors, so I switched to Synplify Pro (a high quality logic
+synthesis tools included with with Diamond).  But I found that the bash
+shell scripts used to launch Synplify reference /bin/sh, which is linked to
+"dash" on Ubuntu.  Simple solution is to link /bin/sh to /bin/bash instead
+of /bin/dash.
+
+	sudo rm /bin/sh
+	sudo ln -s /bin/bash /bin/sh
 
 ## Serial Cable
 
-In Windows I am able to use the extra ports of the FTDI USB to serial
+In Windows I am able to use the extra ports of the FTDI FT2232 USB to serial
 adapter chip for the embedded programmer as a console UART for the FPGA.  In
 Linux, all ports of the FTDI chip become disabled, so this can't be done. 
 Worse, the Diamond programmer crashes if you have any other FTDI cable
 plugged into your computer.  The solution is to use a Prolific or SiLabs
 based USB to serial adapter cable for the serial console.
 
-As shown in the photo above, the serial console cable should be connected to
-J40:
+The serial console cable should be connected to J40:
 
 * K4 is serial ouptut
 * P1 is serial input
