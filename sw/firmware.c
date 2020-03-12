@@ -20,6 +20,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "cpu.h"
+
 #define MEM_TOTAL 0x8000 /* 128 KB */
 
 // a pointer to this is a null pointer, but the compiler does not
@@ -555,6 +557,8 @@ void main()
 		print("   [M] Run Memtest\n");
 		print("   [S] Print SPI state\n");
 		print("   [e] Echo UART\n");
+		print("   [i] Mask timer interrupts\n");
+		print("   [I] Enable timer interrupts\n");
 		print("\n");
 
 		for (int rep = 10; rep > 0; rep--)
@@ -570,6 +574,19 @@ void main()
 			case '1':
 				cmd_read_flash_id();
 				break;
+			case 'i': {
+				int org;
+				picorv32_maskirq(org, TIMER_IRQ);
+				print("Timer masked\n");
+				break;
+			}
+			case 'I': {
+				int org;
+				picorv32_maskirq(org, 0);
+				print("Timer enabled\n");
+				break;
+			}
+				
 			case '2':
 				cmd_read_flash_regs();
 				break;
@@ -650,7 +667,9 @@ uint32_t *irq(uint32_t *regs, uint32_t irqs)
 	}
 
 	if ((irqs & 1) != 0) {
+		int old;
 		timer_irq_count++;
+		picorv32_timer(old, 12000000);
 		print("[TIMER-IRQ]\n");
 	}
 
