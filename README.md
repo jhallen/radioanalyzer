@@ -4,12 +4,13 @@ Joe's Antique Radio Analyzer
 
 This is a low cost instrument containing both a sweep generator and an
 oscilloscope.  It is designed primarily to perform alignment on antique
-radios, but could be used as a more general purpose test instrument:
+radios, and is intended to replace classic marker sweep generators.
 
-The signal/sweep generator must generate an FM stereo signal up to 108 MHz,
-suitable for commercial broadcast receivers (up to 148 MHz for 2 meter ham
-radio would be preferred).  It must generate modulated AM up to 1.8 MHz (up
-to 30 MHz and with SSB support would be preferred for ham radio use).
+The signal generator must be capacble of generating an FM stereo signal up
+to 108 MHz, suitable for commercial broadcast receivers (up to 148 MHz for 2
+meter ham radio would be preferred).  It must generate modulated AM up to
+1.8 MHz (up to 30 MHz and with SSB support would be preferred for ham radio
+use).
 
 The output should be controlled with an attenuator.
 
@@ -35,16 +36,18 @@ cost more than one step size change of the ECP5 FPGA, it's worth it.
 The PicoRV32 has a lot of value even though it's a relatively simple CPU. 
 The value is that it (and RISC-V) is license free, not encumbered by patents
 and all of the work to port GCC and LLVM/Clang has already been done.  These
-toolchains represents thousands of man-years of effort.
+toolchains represent thousands of man-years of effort.
+
+See [https://riscv.org/faq/](https://riscv.org/faq/)
 
 The signal generator uses a DDS implemented in the FPGA.  An expensive DAC
 is avoided by using a delta-sigma modulator enhanced with a digital to time
-converter.
+converter (DTC).
 
 See this paper: [https://pdfs.semanticscholar.org/a947/d7774c73c58028026ef628da1f0323acfce6.pdf](https://pdfs.semanticscholar.org/a947/d7774c73c58028026ef628da1f0323acfce6.pdf)
 
 The expensive ADCs needed for the oscilloscope are avoided by using an LVDS
-input comparator in combination with a time to digital converter.
+input comparator in combination with a time to digital converter (TDC).
 
 See this paper: [https://cas.tudelft.nl/pubs/Homulle15fpga.pdf](https://cas.tudelft.nl/pubs/Homulle15fpga.pdf).
 
@@ -54,7 +57,7 @@ See:
 
 [EEVblog #675 - How To Reverse Engineer A Rigol DS1054Z](https://www.youtube.com/watch?v=lJVrTV_BeGg)
 
-# Development board
+# Firmware development
 
 I'm starting with Lattice's $99 ECP5 evaluation board, which includes a one
 year license for Lattice Diamond for the LFE5UM5G-85 FPGA.  This version of
@@ -76,10 +79,12 @@ See [Build Instructions](doc/build.md)
 
 # SoC Bus
 
-I use a Verilog source code centered approach to System On Chip (SoC)
-design.  This means that instead of using some external tool to generate the
-SoC, I design the SoC bus to be very convenient to use from Verilog source
-code.  The system is designed right in Verilog, no external tools needed.
+I use a Verilog source code centered approach to System On Chip (SoC) design
+(I have been designing FPGAs this way for years, and there is usally a
+bridge to an external master CPU or to on an on-chip ARM processor).  This
+means that instead of using some external tool to generate the SoC, I design
+the SoC bus to be very convenient to use from Verilog source code.  The
+system is designed right in Verilog, no external tools needed.
 
 Consider a SoC component, such a CSR (Control and Status Register).  It
 has:
