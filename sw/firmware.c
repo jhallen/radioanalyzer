@@ -22,7 +22,8 @@
 
 #include "cpu.h"
 
-#define MEM_TOTAL 0x8000 /* 128 KB */
+#define MEM_TOTAL 0x8000 /* 32 KB- upper half for stack */
+#define RAM_BASE 0x0
 
 // a pointer to this is a null pointer, but the compiler does not
 // know that because "sram" is a linker symbol from sections.lds.
@@ -248,8 +249,8 @@ void cmd_memtest()
 	int stride = 256;
 	uint32_t state;
 
-	volatile uint32_t *base_word = (uint32_t *) 0x8000;
-	volatile uint8_t *base_byte = (uint8_t *) 0x8000;
+	volatile uint32_t *base_word = (uint32_t *) RAM_BASE;
+	volatile uint8_t *base_byte = (uint8_t *) RAM_BASE;
 
 	print("Running memtest ");
 

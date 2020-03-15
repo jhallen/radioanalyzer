@@ -2,7 +2,7 @@
 <BaliProject version="3.2" title="ra" device="LFE5UM5G-85F-8BG381C" default_implementation="impl1">
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="synplify" default_strategy="Strategy1">
-        <Options def_top="picorv32_wb" top="ra_top"/>
+        <Options def_top="rom" top="ra_top"/>
         <Source name="rtl/ra_top.v" type="Verilog" type_short="Verilog">
             <Options top_module="ra_top"/>
         </Source>
@@ -12,7 +12,10 @@
         <Source name="rtl/bus_reg.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="rtl/bus_rom.v" type="Verilog" type_short="Verilog">
+        <Source name="rtl/bus_spiflash.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="rtl/spimemio.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
         <Source name="rtl/bus_uart.v" type="Verilog" type_short="Verilog">

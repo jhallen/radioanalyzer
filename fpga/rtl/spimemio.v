@@ -17,6 +17,28 @@
  *
  */
 
+/* Joe's notes:
+ *
+ *  assert valid and addr, high them constant until ready
+ *  transfer occurs when both ready and valid are high.
+ *  ready is combinatorial output fed from valid
+ *
+ *    spimemio reads the requested word from the flash
+ *      it asserts ready when the word is available
+ *      it assumes you want the word from the next higher address, so starts reading it
+ *        but it holds off reading in the 4th byte of the word until next valid (why wait?)
+ *      anyway when valid comes in, we get the 4th byte if the guessed read ahead is correct
+ *      otherwise we give the read command again: 'jump' logic detects this
+ *
+ * config_en low means config bits control spi-flash device instead of built-in controller
+ * config_ddr means use ddr mode
+ * config_qspi means use qspi mode
+ * config_cont means flash device will accept new address without requiring reissuing read command (saves 8 cycles)
+ *   when config_cont: we feed A5 after the third address byte
+ *   otherwise we feed FF
+ * during data transfer we feed config_dummy
+ */
+
 module spimemio (
 	input clk, resetn,
 
@@ -268,10 +290,10 @@ module spimemio (
 					din_valid <= 1;
 					din_tag <= 0;
 					case ({config_ddr, config_qspi})
-						2'b11: din_data <= 8'h ED;
-						2'b01: din_data <= 8'h EB;
-						2'b10: din_data <= 8'h BB;
-						2'b00: din_data <= 8'h 03;
+						2'b11: din_data <= 8'h ED; // ?? Macronix part does not have this
+						2'b01: din_data <= 8'h EB; // 4read: suppports performance enhance mode
+						2'b10: din_data <= 8'h BB; // 2read
+						2'b00: din_data <= 8'h 03; // Slow read
 					endcase
 					if (din_ready) begin
 						din_valid <= 0;
