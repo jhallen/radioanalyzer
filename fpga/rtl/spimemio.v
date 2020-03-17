@@ -270,6 +270,7 @@ module spimemio (
 						state <= 2;
 					end
 				end
+
 				2: begin
 					din_valid <= 1;
 					din_data <= 8'h ab;

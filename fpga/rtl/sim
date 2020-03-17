@@ -12,5 +12,8 @@ ram_sp_be.v \
 ra_top.v \
 rom.v \
 simpleuart.v \
+spiflash.v \
+bus_spiflash.v \
+spimemio.v \
 tb.v &&
 ./a.out

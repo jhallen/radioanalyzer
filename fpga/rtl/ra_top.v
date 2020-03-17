@@ -8,6 +8,9 @@ module ra_top
 
   leds,
 
+// synthesis translate_off
+  flash_clk,
+// synthesis translate_on
   flash_cs_l,
   flash_d0,
   flash_d1,
@@ -23,6 +26,10 @@ input ser_rx;
 
 output [7:0] leds;
 
+// synthesis translate_off
+output flash_clk;
+// synthesis translate_on
+wire flash_clk;
 output flash_cs_l;
 inout flash_d0;
 inout flash_d1;
@@ -192,20 +199,67 @@ bus_rom #(.BUS_ADDR(32'h0001_0000), .LOGSIZE(16), .INIT_FILE("../../sw/ra.mem"))
 
 // SPI Flash
 
+reg mclk_oe;
+reg mclk_oe_1;
+
+// Lattice way of accessing spi_sclk pin
+USRMCLK u1 (.USRMCLKI(flash_clk), .USRMCLKTS(mclk_oe)) /* synthesis syn_noprune=1 */;
+
+always @(posedge clk)
+  if (!reset_l)
+    begin
+      mclk_oe_1 <= 1;
+      mclk_oe <= 1;
+    end
+  else
+    begin
+      mclk_oe_1 <= 0;
+      mclk_oe <= mclk_oe_1;
+    end
+
+// Flash data bit drivers
+
+wire flash_oe0;
+wire flash_oe1;
+wire flash_oe2;
+wire flash_oe3;
+
+wire flash_do0;
+wire flash_do1;
+wire flash_do2;
+wire flash_do3;
+
+assign flash_d0 = flash_oe0 ? flash_do0 : 1'bz;
+assign flash_d1 = flash_oe1 ? flash_do1 : 1'bz;
+assign flash_d2 = flash_oe2 ? flash_do2 : 1'bz;
+assign flash_d3 = flash_oe3 ? flash_do3 : 1'bz;
+
 bus_spiflash #(
   .BUS_ADDR_MEM(32'h0010_0000),
   .SIZE_MEM(32'h0010_0000),
-  .BUS_ADDR_CFG(32'h0200_0000)
+  .BUS_ADDR_CFG(32'h0200_0000),
+  .MEM_OFFSET(32'h00F0_0000)
 ) cpu_rom (
   .bus_in (bus_in),
   .bus_out (cpu_rom_bus_out),
 
   .flash_cs_l (flash_cs_l),
-//  flash_sclk,
-  .flash_d0 (flash_d0),
-  .flash_d1 (flash_d1),
-  .flash_d2 (flash_d2),
-  .flash_d3 (flash_d3)
+  .flash_clk (flash_clk),
+
+  .flash_io0_oe (flash_oe0),
+  .flash_io1_oe (flash_oe1),
+  .flash_io2_oe (flash_oe2),
+  .flash_io3_oe (flash_oe3),
+
+  .flash_io0_do (flash_do0),
+  .flash_io1_do (flash_do1),
+  .flash_io2_do (flash_do2),
+  .flash_io3_do (flash_do3),
+
+  .flash_io0_di (flash_d0),
+  .flash_io1_di (flash_d1),
+  .flash_io2_di (flash_d2),
+  .flash_io3_di (flash_d3)
   );
 
 // RISC-V CPU
@@ -269,3 +323,9 @@ assign bus_out =
   ;
 
 endmodule
+
+// synthesis translate_off
+module USRMCLK (USRMCLKI, USRMCLKTS);
+input USRMCLKI, USRMCLKTS;
+endmodule
+// synthesis translate_on
