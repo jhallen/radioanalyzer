@@ -319,3 +319,26 @@ wire bus_wr_ack = bus_out[BUS_FIELD_WR_ACK]; // Write acknowledge
 wire bus_rd_ack = bus_out[BUS_FIELD_RD_ACK]; // Read acknowledge
 wire [BUS_DATA_WIDTH-1:0] bus_rd_data = bus_out[BUS_RD_DATA_END-1:BUS_RD_DATA_START]; // Read data
 ````
+
+# SPI Flash
+
+A single SPI NOR flash device is used for both FPGA configuration and RISC-V
+firmware.  This was somewhat challenging on the ECP5, here are some hints:
+
+You must use a Lattice black box for user logic to access the SPI sclk: see
+USRMCLK in the ECP5 sysConfig Usage Guide
+
+In Tools -> Spreadsheet view -> Global Preferences -> sysConfig, you must
+disable the SLAVE_SPI_PORT and MASTER_SPI_PORT.  This is documented in the
+ECP5 sysConfig Usage Guide.  A consequence of leaving these disabled is that
+you can not program the SPI Flash using the Programmer without first loading
+a design into the FPGA which has the MASTER_SPI_PORT enabled.  This enables
+"SPI Flash Background Programming" to work from the Programmer. 
+
+The bank 8 I/O pins must all be set for LVCMOS25 (the default), even if
+bank 8 is using 3.3V.  If you use LVCMOS33, strange things happen: MISO and
+MOSI are forced to open drain.
+
+You can use the Lattice "Deployment Tool" to generate an image for the
+SPI-flash that combines the .bit file and the firmware.  However, you must
+enable bit mirroring for the firmware (and not for the .bit file).
