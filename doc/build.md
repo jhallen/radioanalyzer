@@ -2,6 +2,57 @@
 
 I use Ubuntu Linux 18.04.
 
+## Environment modules
+
+I highly recommend that you use Environment Modules to manage multiple
+versions of vendor software tools.  See:
+
+	http://modules.sourceforge.net/
+
+With environment modules, you can select a tool version to use:
+
+	module add diamond/3.11
+
+	module list
+
+	Currently Loaded Modulefiles:
+	 1) diamond/3.11  
+
+	module avail
+	
+	-------------------------------------------------------------------------------------------------------- /modules -------------------------------------------------------------------------------
+	arduino/1.8.5(default)  armgcc/4.8.4  armgcc/5.4.1(default)  diamond/3.11  fx3/1.0(default)  petalinux/2017.4(default)  ti/8.1.0.0(default)  xilinx/2016.4  xilinx/2017.4(default)  xilinx/2019.1  
+
+
+Here is my module file for Lattice Diamond (install as /modulesfiles/diamond/3.11):
+
+	#%Module1.0#####################################################################
+
+	proc ModulesHelp { } {
+		global version modroot
+
+		puts stderr "diamond/3.11"
+	}
+
+	module-whatis   "Sets the environment Lattice Diamond 3.11"
+
+	# for Tcl script use only
+	set     topdir          /opt/lattice/diamond
+	set     version         3.11_x64
+	set     sys             linux86
+
+	setenv	LSC_DIAMOND		true
+	setenv	NEOCAD_MAXLINEWIDTH	32767
+	setenv	FOUNDRY			/opt/lattice/diamond/3.11_x64/ispfpga
+	setenv	TCL_LIBRARY		/opt/lattice/diamond/3.11_x64/tcltk/lib/tcl8.5
+
+	prepend-path	LD_LIBRARY_PATH		/opt/lattice/diamond/3.11_x64/bin/lin64
+	prepend-path	LD_LIBRARY_PATH		/opt/lattice/diamond/3.11_x64/ispfpga/bin/lin64
+	prepend-path	LM_LICENSE_FILE 	/opt/lattice/diamond/3.11_x64/license/license.dat
+
+	prepend-path    PATH            /opt/lattice/diamond/3.11_x64/bin/lin64
+	prepend-path    PATH		/opt/lattice/diamond/3.11_x64/ispfpga/bin/lin64
+
 ## Simulation
 
 I use Icarus Verilog for simulation and gtkwave for waveform viewing:
