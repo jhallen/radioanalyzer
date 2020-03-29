@@ -77,6 +77,7 @@ syn/rev_1/${NAME}.edi: syn/${NAME}_syn.tcl
 
 # Convert EDIF to NGO
 gates/${NAME}.ngo: syn/rev_1/${NAME}.edi
+	rm -rf gates
 	mkdir gates && (cd gates; edif2ngd  -l "${TECH}" -d ${PART} ../syn/rev_1/${NAME}.edi ${NAME}.ngo)
 
 # Convert NGO to NGD

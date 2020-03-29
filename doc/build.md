@@ -9,20 +9,9 @@ versions of vendor software tools.  See:
 
 	http://modules.sourceforge.net/
 
-With environment modules, you can select a tool version to use:
+With environment modules, you can select a particular version of an installed to use:
 
 	module add diamond/3.11
-
-	module list
-
-	Currently Loaded Modulefiles:
-	 1) diamond/3.11  
-
-	module avail
-	
-	-------------------------------------------------------------------------------------------------------- /modules -------------------------------------------------------------------------------
-	arduino/1.8.5(default)  armgcc/4.8.4  armgcc/5.4.1(default)  diamond/3.11  fx3/1.0(default)  petalinux/2017.4(default)  ti/8.1.0.0(default)  xilinx/2016.4  xilinx/2017.4(default)  xilinx/2019.1  
-
 
 Here is my module file for Lattice Diamond (install as /modulesfiles/diamond/3.11):
 
