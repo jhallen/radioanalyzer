@@ -78,7 +78,14 @@ The baud rate is 115200.  In Linux, I recommend Picocom:
 This creates "ra.mem" which is currently used to initialize the firmware ROM
 within the FPGA.
 
-## FPGA build
+## FPGA build using Makefile
+
+	export bindir=/usr/local/diamond/3.11_x64/bin/lin64
+	source ${bindir}/diamond_env
+	cd fpga
+	make
+
+## FPGA build using project file and GUI
 
 Start diamond:
 
